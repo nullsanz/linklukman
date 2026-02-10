@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  color-scheme: dark; /* Pakai mode gelap */
+  background-color: #0f172a; /* Samakan dengan warna background App */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+```
+
+### 4. `src/App.jsx`
+Untuk file ini, kamu tinggal **Copy-Paste seluruh kode yang ada di Preview Canvas (sebelah kanan)** ke dalam file `src/App.jsx` di StackBlitz kamu.
+
+### Langkah Terakhir (Penting!)
+Karena kita menggunakan icon dari library `lucide-react`, kamu harus menginstalnya di StackBlitz.
+1. Lihat bagian bawah StackBlitz, biasanya ada **Terminal**.
+2. Ketik perintah ini lalu tekan Enter:
+   ```bash
+   npm install lucide-react
