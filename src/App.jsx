@@ -19,7 +19,7 @@ const profileData = {
   handle: '@null.cloud',
   bio: 'Fullstack Developer | Tech Enthusiast | Content Creator',
   avatarUrl:
-    'https://media.licdn.com/dms/image/v2/D5603AQH45LRVNorbGw/profile-displayphoto-shrink_800_800/B56ZlSI.LwG4Ac-/0/1758019708589?e=1772064000&v=beta&t=SICT2IyGO2zkNe2M2n_ZaBudjnMvtIhVEnULvhxGy2k', // Updated avatar URL
+    'https://media.licdn.com/dms/image/v2/D5603AQH45LRVNorbGw/profile-displayphoto-shrink_400_400/B56ZlSI.LwG4Ag-/0/1758019708581?e=1775088000&v=beta&t=gVOIY9wGoq8BPZ3R2z5oszMEzn8n5-y_O5DMAmiVJzs', // Updated avatar URL
 };
 
 const links = [
