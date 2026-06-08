@@ -19,7 +19,7 @@ const profileData = {
   handle: '@null.cloud',
   bio: 'Fullstack Developer | Tech Enthusiast | Content Creator',
   avatarUrl:
-    'https://media.licdn.com/dms/image/v2/D5603AQH45LRVNorbGw/profile-displayphoto-shrink_400_400/B56ZlSI.LwG4Ag-/0/1758019708581?e=1775088000&v=beta&t=gVOIY9wGoq8BPZ3R2z5oszMEzn8n5-y_O5DMAmiVJzs', // Updated avatar URL
+    'https://res.cloudinary.com/dkjfid0sq/image/upload/v1780885608/1758019708589_eay1ex.jpg', // Updated avatar URL
 };
 
 const links = [
