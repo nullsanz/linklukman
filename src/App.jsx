@@ -17,7 +17,8 @@ import {
   Crop,
   Image as ImageIcon,
   AlertCircle,
-  Github
+  Github,
+  Music
 } from 'lucide-react';
 
 // --- Data Configuration ---
@@ -36,45 +37,31 @@ const socials = [
     title: 'WhatsApp',
     url: 'https://wa.me/6285718532060',
     icon: <MessageCircle size={22} />,
-    color: 'hover:shadow-green-500/50 hover:border-green-500/50 hover:bg-green-500/20',
-    bg: 'bg-green-500/10',
-    textColor: 'text-green-400',
   },
   {
     id: 2,
     title: 'Instagram',
     url: 'https://www.instagram.com/null.cloud',
     icon: <Instagram size={22} />,
-    color: 'hover:shadow-pink-500/50 hover:border-pink-500/50 hover:bg-pink-500/20',
-    bg: 'bg-pink-500/10',
-    textColor: 'text-pink-400',
   },
   {
     id: 3,
     title: 'TikTok',
     url: 'https://www.tiktok.com/@nullsanz',
-    icon: <span className="font-bold text-xl leading-none">♪</span>,
-    color: 'hover:shadow-cyan-500/50 hover:border-cyan-500/50 hover:bg-cyan-500/20',
-    bg: 'bg-cyan-500/10',
-    textColor: 'text-cyan-400',
+    // Using a reliable Lucide icon instead of a unicode character to avoid garbled text bugs
+    icon: <Music size={22} />, 
   },
   {
     id: 4,
     title: 'LinkedIn',
     url: 'https://www.linkedin.com/in/lukmanul-hakim-586658309/',
     icon: <Linkedin size={22} />,
-    color: 'hover:shadow-blue-600/50 hover:border-blue-600/50 hover:bg-blue-600/20',
-    bg: 'bg-blue-600/10',
-    textColor: 'text-blue-400',
   },
   {
     id: 5,
     title: 'GitHub',
-    url: 'https://github.com/nullsanz', // Default url assuming github
+    url: 'https://github.com/nullsanz',
     icon: <Github size={22} />,
-    color: 'hover:shadow-slate-400/50 hover:border-slate-400/50 hover:bg-slate-400/20',
-    bg: 'bg-slate-700/30',
-    textColor: 'text-slate-300',
   },
 ];
 
@@ -88,9 +75,6 @@ const links = [
         subtitle: 'nullsanz.anull.cloud',
         url: 'https://nullsanz.anull.cloud/',
         icon: <Globe size={20} />,
-        color: 'hover:shadow-purple-500/30 hover:border-purple-500/50',
-        bg: 'bg-purple-500/10',
-        textColor: 'text-purple-400',
       },
       {
         id: 2,
@@ -98,9 +82,6 @@ const links = [
         subtitle: 'lukman.anull.cloud',
         url: 'https://lukman.anull.cloud/',
         icon: <Briefcase size={20} />,
-        color: 'hover:shadow-indigo-500/30 hover:border-indigo-500/50',
-        bg: 'bg-indigo-500/10',
-        textColor: 'text-indigo-400',
       },
       {
         id: 3,
@@ -108,9 +89,6 @@ const links = [
         subtitle: 'Aplikasi pencatat pengeluaran harian',
         url: '#',
         icon: <Layers size={20} />,
-        color: 'hover:shadow-rose-500/30 hover:border-rose-500/50',
-        bg: 'bg-rose-500/10',
-        textColor: 'text-rose-400',
       },
       {
         id: 4,
@@ -118,9 +96,6 @@ const links = [
         subtitle: 'Member Area',
         url: 'https://lokerbrayy.anull.cloud/',
         icon: <Layers size={20} />,
-        color: 'hover:shadow-emerald-500/30 hover:border-emerald-500/50',
-        bg: 'bg-emerald-500/10',
-        textColor: 'text-emerald-400',
       },
       {
         id: 5,
@@ -128,9 +103,6 @@ const links = [
         subtitle: 'Buat CV secara gratis',
         url: 'https://lokerbrayy.anull.cloud/cv-builder',
         icon: <FileText size={20} />,
-        color: 'hover:shadow-sky-500/30 hover:border-sky-500/50',
-        bg: 'bg-sky-500/10',
-        textColor: 'text-sky-400',
       },
       {
         id: 6,
@@ -138,9 +110,6 @@ const links = [
         subtitle: 'Gabungkan PDF Anda',
         url: 'https://lokerbrayy.anull.cloud/doc-merger',
         icon: <Briefcase size={20} />,
-        color: 'hover:shadow-teal-500/30 hover:border-teal-500/50',
-        bg: 'bg-teal-500/10',
-        textColor: 'text-teal-400',
       },
       {
         id: 7,
@@ -148,9 +117,6 @@ const links = [
         subtitle: 'testbrayy.anull.cloud',
         url: 'https://testbrayy.anull.cloud/',
         icon: <BrainCircuit size={20} />,
-        color: 'hover:shadow-orange-500/30 hover:border-orange-500/50',
-        bg: 'bg-orange-500/10',
-        textColor: 'text-orange-400',
       },
     ],
   },
@@ -163,18 +129,12 @@ const links = [
         title: 'Grup Loker Bray 1',
         url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1',
         icon: <Users size={20} />,
-        color: 'hover:shadow-yellow-500/30 hover:border-yellow-500/50',
-        bg: 'bg-yellow-500/10',
-        textColor: 'text-yellow-400',
       },
       {
         id: 9,
         title: 'Grup Loker Bray 2',
         url: 'https://chat.whatsapp.com/D5Jv7eRkerbJMlRxfEfITm',
         icon: <Users size={20} />,
-        color: 'hover:shadow-amber-500/30 hover:border-amber-500/50',
-        bg: 'bg-amber-500/10',
-        textColor: 'text-amber-400',
       },
     ],
   },
@@ -186,9 +146,6 @@ const links = [
         title: 'Tools Print Grup',
         url: '#',
         icon: <Printer size={20} />,
-        color: 'border-slate-800/80 bg-slate-900/50 cursor-not-allowed opacity-75',
-        bg: 'bg-slate-800',
-        textColor: 'text-slate-500',
         locked: true,
         badge: 'Private',
       },
@@ -197,9 +154,6 @@ const links = [
         title: 'Tools Auto Cropping Image',
         url: '#',
         icon: <Crop size={20} />,
-        color: 'border-slate-800/80 bg-slate-900/50 cursor-not-allowed opacity-75',
-        bg: 'bg-slate-800',
-        textColor: 'text-slate-500',
         locked: true,
         badge: 'Private',
       },
@@ -208,9 +162,6 @@ const links = [
         title: 'Tools Mini Photoshop',
         url: '#',
         icon: <ImageIcon size={20} />,
-        color: 'border-slate-800/80 bg-slate-900/50 cursor-not-allowed opacity-75',
-        bg: 'bg-slate-800',
-        textColor: 'text-slate-500',
         locked: true,
         badge: 'Segera Launching',
       },
@@ -224,8 +175,8 @@ const Background = () => (
   <div className="fixed inset-0 z-0 overflow-hidden bg-[#0a0f1c]">
     {/* Animated Gradient Orbs */}
     <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[140px] animate-pulse-slow"></div>
-    <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] animate-pulse-slow delay-3s"></div>
-    <div className="absolute top-[30%] left-[30%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse-slow delay-5s"></div>
+    <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-cyan-600/15 rounded-full blur-[140px] animate-pulse-slow delay-3s"></div>
+    <div className="absolute top-[30%] left-[30%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse-slow delay-5s"></div>
 
     {/* Grid Pattern using pure CSS Data URI (No external URL) */}
     <div className="absolute inset-0 bg-noise opacity-[0.08] mix-blend-overlay pointer-events-none"></div>
@@ -244,7 +195,7 @@ const Header = ({ profile }) => {
   return (
     <div className="relative z-10 flex flex-col items-center pt-14 pb-8 text-center px-4">
       <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-full opacity-60 group-hover:opacity-100 blur-md transition-all duration-700 group-hover:duration-300 animate-spin-slow"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full opacity-60 group-hover:opacity-100 blur-md transition-all duration-700 group-hover:duration-300 animate-spin-slow"></div>
         <div className="relative p-1 bg-[#0a0f1c] rounded-full">
           <img
             src={profile.avatarUrl}
@@ -268,17 +219,17 @@ const Header = ({ profile }) => {
       <h1 className="mt-5 text-2xl md:text-3xl font-extrabold text-white tracking-wide drop-shadow-md">
         {profile.name}
       </h1>
-      <p className="mt-1 text-sm md:text-base font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 tracking-wide">
+      <p className="mt-1 text-sm md:text-base font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 tracking-wide">
         {profile.bio}
       </p>
       
       {/* Mini Resume */}
-      <p className="mt-2 text-slate-400/90 text-sm md:text-sm max-w-sm leading-relaxed font-medium">
+      <p className="mt-2 text-slate-400 text-sm max-w-md leading-relaxed font-medium">
         {profile.miniResume}
       </p>
 
-      {/* Social Icons Row */}
-      <div className="flex items-center justify-center gap-3 mt-6">
+      {/* Social Icons Row - Clean, Perfect Spacing, Uniform Glow */}
+      <div className="flex items-center justify-center gap-x-6 mt-6">
         {socials.map((social) => (
           <a
             key={social.id}
@@ -286,7 +237,7 @@ const Header = ({ profile }) => {
             target="_blank"
             rel="noopener noreferrer"
             title={social.title}
-            className={`flex items-center justify-center w-12 h-12 rounded-full border border-white/5 backdrop-blur-md transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-110 ${social.bg} ${social.textColor} ${social.color}`}
+            className="flex items-center justify-center w-12 h-12 rounded-full border border-white/10 backdrop-blur-md bg-slate-900/40 text-slate-300 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-110 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:border-purple-400 hover:text-cyan-400"
           >
             {social.icon}
           </a>
@@ -297,9 +248,9 @@ const Header = ({ profile }) => {
 };
 
 const NoteBlock = ({ text }) => (
-  <div className="mb-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 backdrop-blur-md shadow-lg shadow-amber-500/5">
+  <div className="mb-4 p-4 rounded-2xl bg-slate-900/40 border border-amber-500/30 flex items-start gap-3 backdrop-blur-sm shadow-lg">
     <AlertCircle size={20} className="text-amber-400 shrink-0 mt-0.5" />
-    <p className="text-sm font-medium text-amber-200/90 leading-relaxed text-left">
+    <p className="text-sm font-medium text-slate-300 leading-relaxed text-left">
       {text}
     </p>
   </div>
@@ -310,57 +261,60 @@ const LinkCard = ({ item }) => {
   
   const CardContent = (
     <>
-      {/* Icon Container */}
+      {/* Icon Container (Left) */}
       <div
-        className={`
-        flex items-center justify-center w-12 h-12 rounded-xl shrink-0
-        ${item.bg} ${item.textColor} 
-        transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6
-      `}
+        className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0 bg-slate-800/80 text-cyan-400 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6 group-hover:text-purple-400"
       >
         {item.icon}
       </div>
 
-      {/* Text Content */}
+      {/* Text Content (Center) */}
       <div className="ml-4 flex-1 text-left">
-        <h3 className={`text-[15px] md:text-base font-semibold transition-colors duration-300 ease-out ${isLocked ? 'text-slate-400' : 'text-slate-100 group-hover:text-white'}`}>
+        <h3 className={`text-[15px] md:text-base font-semibold transition-colors duration-300 ease-out ${isLocked ? 'text-slate-500' : 'text-slate-200 group-hover:text-white'}`}>
           {item.title}
         </h3>
         {item.subtitle && (
-          <p className="text-xs text-slate-400/80 group-hover:text-slate-300 transition-colors duration-300 ease-out mt-0.5">
+          <p className="text-xs text-slate-400 transition-colors duration-300 ease-out mt-0.5 group-hover:text-slate-300">
             {item.subtitle}
           </p>
         )}
         {item.badge && (
-          <span className={`inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border
-            ${item.badge.includes('Launching') 
-              ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' 
-              : 'bg-slate-500/10 border-slate-500/30 text-slate-400'
-            }
-          `}>
+          <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border bg-slate-800/60 border-slate-700 text-slate-400">
             {item.badge}
           </span>
         )}
       </div>
 
-      {/* Arrow/Lock Icon */}
-      <div className={`transition-all duration-300 ease-out ${isLocked ? 'text-slate-600' : 'text-slate-500 group-hover:text-white group-hover:translate-x-1.5'}`}>
+      {/* Arrow/Lock Icon (Right) */}
+      <div className={`transition-all duration-300 ease-out shrink-0 ml-3 ${isLocked ? 'text-slate-600' : 'text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-1.5'}`}>
         {isLocked ? <Lock size={18} /> : <ExternalLink size={18} />}
       </div>
     </>
   );
 
-  const containerClasses = `
-    group relative flex items-center p-4 mb-3.5
-    bg-slate-900/40 backdrop-blur-xl 
+  // Common glassmorphism classes with subtle noise pattern integration
+  const baseClasses = `
+    group relative flex items-center p-4 mb-4
+    bg-slate-900/60 backdrop-blur-sm 
     border border-white/5 rounded-2xl 
-    transition-all duration-300 ease-out
-    ${isLocked ? item.color : `hover:-translate-y-1 hover:shadow-xl hover:scale-[1.02] hover:bg-slate-800/50 ${item.color}`}
+    transition-all duration-300 ease-out overflow-hidden
+  `;
+
+  // Premium hover states for unlocked cards (Purple-Cyan glowing border)
+  const interactiveClasses = `
+    hover:-translate-y-1 hover:scale-[1.01] 
+    hover:border-purple-500/50 hover:bg-slate-800/80
+    hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]
+  `;
+
+  const lockedClasses = `
+    opacity-75 cursor-not-allowed
   `;
 
   if (isLocked) {
     return (
-      <div className={containerClasses}>
+      <div className={`${baseClasses} ${lockedClasses}`}>
+        <div className="absolute inset-0 bg-noise opacity-[0.04] mix-blend-overlay pointer-events-none"></div>
         {CardContent}
       </div>
     );
@@ -371,8 +325,9 @@ const LinkCard = ({ item }) => {
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={containerClasses}
+      className={`${baseClasses} ${interactiveClasses} no-underline`}
     >
+      <div className="absolute inset-0 bg-noise opacity-[0.04] mix-blend-overlay pointer-events-none transition-opacity duration-300 group-hover:opacity-[0.08]"></div>
       {CardContent}
     </a>
   );
@@ -391,7 +346,7 @@ export default function App() {
 
       <main
         className={`
-        relative z-10 max-w-md mx-auto min-h-screen pb-32
+        relative z-10 max-w-md mx-auto min-h-screen pb-12
         transition-opacity duration-1000 ease-in-out
         ${mounted ? 'opacity-100' : 'opacity-0'}
       `}
@@ -420,7 +375,7 @@ export default function App() {
               )}
 
               {/* Links */}
-              <div>
+              <div className="space-y-1">
                 {category.items.map((item) => (
                   <LinkCard key={item.id} item={item} />
                 ))}
