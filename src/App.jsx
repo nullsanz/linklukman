@@ -86,7 +86,7 @@ const links = [
 
       {
         id: 4,
-        title: 'Dashboard LokerBray',
+        title: 'Dashboard Member LokerBray',
         subtitle: 'Member Area',
         url: 'https://lokerbrayy.anull.cloud/dashboard-member',
         icon: <Layers size={20} />,
