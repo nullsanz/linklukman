@@ -88,7 +88,7 @@ const links = [
         id: 4,
         title: 'Dashboard LokerBray',
         subtitle: 'Member Area',
-        url: 'https://lokerbrayy.anull.cloud/',
+        url: 'https://lokerbrayy.anull.cloud/dashboard-member',
         icon: <Layers size={20} />,
       },
       {
