@@ -83,13 +83,7 @@ const links = [
         url: 'https://lukman.anull.cloud/',
         icon: <Briefcase size={20} />,
       },
-      {
-        id: 3,
-        title: 'Expense Tracker (Dark Mode)',
-        subtitle: 'Aplikasi pencatat pengeluaran harian',
-        url: '#',
-        icon: <Layers size={20} />,
-      },
+
       {
         id: 4,
         title: 'Dashboard LokerBray',
