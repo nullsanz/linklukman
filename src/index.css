@@ -7,8 +7,8 @@
   line-height: 1.5;
   font-weight: 400;
   
-  color-scheme: dark; /* Pakai mode gelap */
-  background-color: #0f172a; /* Samakan dengan warna background App */
+  color-scheme: dark;
+  background-color: #0a0f1c;
 }
 
 body {
@@ -17,14 +17,17 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-```
 
-### 4. `src/App.jsx`
-Untuk file ini, kamu tinggal **Copy-Paste seluruh kode yang ada di Preview Canvas (sebelah kanan)** ke dalam file `src/App.jsx` di StackBlitz kamu.
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
 
-### Langkah Terakhir (Penting!)
-Karena kita menggunakan icon dari library `lucide-react`, kamu harus menginstalnya di StackBlitz.
-1. Lihat bagian bawah StackBlitz, biasanya ada **Terminal**.
-2. Ketik perintah ini lalu tekan Enter:
-   ```bash
-   npm install lucide-react
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+.delay-3s { animation-delay: 3s; }
+.delay-5s { animation-delay: 5s; }

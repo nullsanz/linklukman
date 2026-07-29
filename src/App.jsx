@@ -16,65 +16,74 @@ import {
   Printer,
   Crop,
   Image as ImageIcon,
-  AlertCircle
+  AlertCircle,
+  Github
 } from 'lucide-react';
 
 // --- Data Configuration ---
 const profileData = {
   name: 'Lukmanul Hakim',
   handle: '@null.cloud',
-  bio: 'Co-founder LokerBray | Fullstack Developer | Tech Enthusiast',
+  bio: 'Founder & Developer LokerBray',
+  miniResume: 'Information Systems Student at Universitas Terbuka | IT Multimedia at PT Ihara',
   avatarUrl:
-    'https://res.cloudinary.com/dkjfid0sq/image/upload/v1785336228/719770759_17899290135454188_1095631538196561206_n_o4nkib.jpg',
+    'https://res.cloudinary.com/dkjfid0sq/image/upload/w_200,h_200,c_fill,r_max,f_png/v1785336228/719770759_17899290135454188_1095631538196561206_n_o4nkib.jpg',
 };
 
-const links = [
+const socials = [
   {
-    category: 'Contact & Socials',
-    items: [
-      {
-        id: 1,
-        title: 'WhatsApp Me',
-        url: 'https://wa.me/6285718532060',
-        icon: <MessageCircle size={20} />,
-        color: 'hover:shadow-green-500/30 hover:border-green-500/50',
-        bg: 'bg-green-500/10',
-        textColor: 'text-green-400',
-      },
-      {
-        id: 2,
-        title: 'Instagram',
-        url: 'https://www.instagram.com/null.cloud',
-        icon: <Instagram size={20} />,
-        color: 'hover:shadow-pink-500/30 hover:border-pink-500/50',
-        bg: 'bg-pink-500/10',
-        textColor: 'text-pink-400',
-      },
-      {
-        id: 3,
-        title: 'TikTok',
-        url: 'https://www.tiktok.com/@nullsanz',
-        icon: <span className="font-bold text-lg leading-none">♪</span>,
-        color: 'hover:shadow-cyan-500/30 hover:border-cyan-500/50',
-        bg: 'bg-cyan-500/10',
-        textColor: 'text-cyan-400',
-      },
-      {
-        id: 4,
-        title: 'LinkedIn',
-        url: 'https://www.linkedin.com/in/lukmanul-hakim-586658309/',
-        icon: <Linkedin size={20} />,
-        color: 'hover:shadow-blue-600/30 hover:border-blue-600/50',
-        bg: 'bg-blue-600/10',
-        textColor: 'text-blue-400',
-      },
-    ],
+    id: 1,
+    title: 'WhatsApp',
+    url: 'https://wa.me/6285718532060',
+    icon: <MessageCircle size={22} />,
+    color: 'hover:shadow-green-500/50 hover:border-green-500/50 hover:bg-green-500/20',
+    bg: 'bg-green-500/10',
+    textColor: 'text-green-400',
   },
+  {
+    id: 2,
+    title: 'Instagram',
+    url: 'https://www.instagram.com/null.cloud',
+    icon: <Instagram size={22} />,
+    color: 'hover:shadow-pink-500/50 hover:border-pink-500/50 hover:bg-pink-500/20',
+    bg: 'bg-pink-500/10',
+    textColor: 'text-pink-400',
+  },
+  {
+    id: 3,
+    title: 'TikTok',
+    url: 'https://www.tiktok.com/@nullsanz',
+    icon: <span className="font-bold text-xl leading-none">♪</span>,
+    color: 'hover:shadow-cyan-500/50 hover:border-cyan-500/50 hover:bg-cyan-500/20',
+    bg: 'bg-cyan-500/10',
+    textColor: 'text-cyan-400',
+  },
+  {
+    id: 4,
+    title: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/lukmanul-hakim-586658309/',
+    icon: <Linkedin size={22} />,
+    color: 'hover:shadow-blue-600/50 hover:border-blue-600/50 hover:bg-blue-600/20',
+    bg: 'bg-blue-600/10',
+    textColor: 'text-blue-400',
+  },
+  {
+    id: 5,
+    title: 'GitHub',
+    url: 'https://github.com/nullsanz', // Default url assuming github
+    icon: <Github size={22} />,
+    color: 'hover:shadow-slate-400/50 hover:border-slate-400/50 hover:bg-slate-400/20',
+    bg: 'bg-slate-700/30',
+    textColor: 'text-slate-300',
+  },
+];
+
+const links = [
   {
     category: 'Portofolio & Projects',
     items: [
       {
-        id: 5,
+        id: 1,
         title: 'Web Portofolio Utama',
         subtitle: 'nullsanz.anull.cloud',
         url: 'https://nullsanz.anull.cloud/',
@@ -84,7 +93,7 @@ const links = [
         textColor: 'text-purple-400',
       },
       {
-        id: 6,
+        id: 2,
         title: 'Web Portofolio 2',
         subtitle: 'lukman.anull.cloud',
         url: 'https://lukman.anull.cloud/',
@@ -94,7 +103,17 @@ const links = [
         textColor: 'text-indigo-400',
       },
       {
-        id: 7,
+        id: 3,
+        title: 'Expense Tracker (Dark Mode)',
+        subtitle: 'Aplikasi pencatat pengeluaran harian',
+        url: '#',
+        icon: <Layers size={20} />,
+        color: 'hover:shadow-rose-500/30 hover:border-rose-500/50',
+        bg: 'bg-rose-500/10',
+        textColor: 'text-rose-400',
+      },
+      {
+        id: 4,
         title: 'Dashboard LokerBray',
         subtitle: 'Member Area',
         url: 'https://lokerbrayy.anull.cloud/',
@@ -104,7 +123,7 @@ const links = [
         textColor: 'text-emerald-400',
       },
       {
-        id: 8,
+        id: 5,
         title: 'CV Builder Otomatis',
         subtitle: 'Buat CV secara gratis',
         url: 'https://lokerbrayy.anull.cloud/cv-builder',
@@ -114,7 +133,7 @@ const links = [
         textColor: 'text-sky-400',
       },
       {
-        id: 9,
+        id: 6,
         title: 'Doc Merger & Compressor',
         subtitle: 'Gabungkan PDF Anda',
         url: 'https://lokerbrayy.anull.cloud/doc-merger',
@@ -124,7 +143,7 @@ const links = [
         textColor: 'text-teal-400',
       },
       {
-        id: 10,
+        id: 7,
         title: 'Test Psikotes Online',
         subtitle: 'testbrayy.anull.cloud',
         url: 'https://testbrayy.anull.cloud/',
@@ -137,10 +156,10 @@ const links = [
   },
   {
     category: 'Community (Loker Bray)',
-    note: 'Harap masuk ke SALAH SATU grup saja. Jika dalam 1 hari belum di-acc admin, silakan coba masuk ke grup yang satunya.',
+    note: '📍 Harap join 1 grup saja. Proses ACC maksimal 1x24 jam.',
     items: [
       {
-        id: 11,
+        id: 8,
         title: 'Grup Loker Bray 1',
         url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1',
         icon: <Users size={20} />,
@@ -149,7 +168,7 @@ const links = [
         textColor: 'text-yellow-400',
       },
       {
-        id: 12,
+        id: 9,
         title: 'Grup Loker Bray 2',
         url: 'https://chat.whatsapp.com/D5Jv7eRkerbJMlRxfEfITm',
         icon: <Users size={20} />,
@@ -163,7 +182,7 @@ const links = [
     category: 'Project Anul Copy Centre',
     items: [
       {
-        id: 13,
+        id: 10,
         title: 'Tools Print Grup',
         url: '#',
         icon: <Printer size={20} />,
@@ -174,7 +193,7 @@ const links = [
         badge: 'Private',
       },
       {
-        id: 14,
+        id: 11,
         title: 'Tools Auto Cropping Image',
         url: '#',
         icon: <Crop size={20} />,
@@ -185,7 +204,7 @@ const links = [
         badge: 'Private',
       },
       {
-        id: 15,
+        id: 12,
         title: 'Tools Mini Photoshop',
         url: '#',
         icon: <ImageIcon size={20} />,
@@ -203,19 +222,13 @@ const links = [
 
 const Background = () => (
   <div className="fixed inset-0 z-0 overflow-hidden bg-[#0a0f1c]">
-    {/* Animated Gradient Orbs - Enhanced for a more premium look */}
+    {/* Animated Gradient Orbs */}
     <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[140px] animate-pulse-slow"></div>
-    <div
-      className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] animate-pulse-slow"
-      style={{ animationDelay: '3s' }}
-    ></div>
-    <div
-      className="absolute top-[30%] left-[30%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse-slow"
-      style={{ animationDelay: '5s' }}
-    ></div>
+    <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] animate-pulse-slow delay-3s"></div>
+    <div className="absolute top-[30%] left-[30%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse-slow delay-5s"></div>
 
-    {/* Grid Pattern */}
-    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay"></div>
+    {/* Grid Pattern using pure CSS Data URI (No external URL) */}
+    <div className="absolute inset-0 bg-noise opacity-[0.08] mix-blend-overlay pointer-events-none"></div>
   </div>
 );
 
@@ -229,7 +242,7 @@ const Header = ({ profile }) => {
   };
 
   return (
-    <div className="relative z-10 flex flex-col items-center pt-14 pb-10 text-center px-4">
+    <div className="relative z-10 flex flex-col items-center pt-14 pb-8 text-center px-4">
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-full opacity-60 group-hover:opacity-100 blur-md transition-all duration-700 group-hover:duration-300 animate-spin-slow"></div>
         <div className="relative p-1 bg-[#0a0f1c] rounded-full">
@@ -256,11 +269,29 @@ const Header = ({ profile }) => {
         {profile.name}
       </h1>
       <p className="mt-1 text-sm md:text-base font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 tracking-wide">
-        {profile.handle}
-      </p>
-      <p className="mt-4 text-slate-400/90 text-sm md:text-base max-w-sm leading-relaxed font-medium">
         {profile.bio}
       </p>
+      
+      {/* Mini Resume */}
+      <p className="mt-2 text-slate-400/90 text-sm md:text-sm max-w-sm leading-relaxed font-medium">
+        {profile.miniResume}
+      </p>
+
+      {/* Social Icons Row */}
+      <div className="flex items-center justify-center gap-3 mt-6">
+        {socials.map((social) => (
+          <a
+            key={social.id}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={social.title}
+            className={`flex items-center justify-center w-12 h-12 rounded-full border border-white/5 backdrop-blur-md transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-110 ${social.bg} ${social.textColor} ${social.color}`}
+          >
+            {social.icon}
+          </a>
+        ))}
+      </div>
     </div>
   );
 };
@@ -284,7 +315,7 @@ const LinkCard = ({ item }) => {
         className={`
         flex items-center justify-center w-12 h-12 rounded-xl shrink-0
         ${item.bg} ${item.textColor} 
-        transition-transform group-hover:scale-110 group-hover:rotate-6
+        transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6
       `}
       >
         {item.icon}
@@ -292,11 +323,11 @@ const LinkCard = ({ item }) => {
 
       {/* Text Content */}
       <div className="ml-4 flex-1 text-left">
-        <h3 className={`text-[15px] md:text-base font-semibold transition-colors ${isLocked ? 'text-slate-400' : 'text-slate-100 group-hover:text-white'}`}>
+        <h3 className={`text-[15px] md:text-base font-semibold transition-colors duration-300 ease-out ${isLocked ? 'text-slate-400' : 'text-slate-100 group-hover:text-white'}`}>
           {item.title}
         </h3>
         {item.subtitle && (
-          <p className="text-xs text-slate-400/80 group-hover:text-slate-300 transition-colors mt-0.5">
+          <p className="text-xs text-slate-400/80 group-hover:text-slate-300 transition-colors duration-300 ease-out mt-0.5">
             {item.subtitle}
           </p>
         )}
@@ -313,7 +344,7 @@ const LinkCard = ({ item }) => {
       </div>
 
       {/* Arrow/Lock Icon */}
-      <div className={`transition-all duration-300 ${isLocked ? 'text-slate-600' : 'text-slate-500 group-hover:text-white group-hover:translate-x-1.5'}`}>
+      <div className={`transition-all duration-300 ease-out ${isLocked ? 'text-slate-600' : 'text-slate-500 group-hover:text-white group-hover:translate-x-1.5'}`}>
         {isLocked ? <Lock size={18} /> : <ExternalLink size={18} />}
       </div>
     </>
@@ -324,7 +355,7 @@ const LinkCard = ({ item }) => {
     bg-slate-900/40 backdrop-blur-xl 
     border border-white/5 rounded-2xl 
     transition-all duration-300 ease-out
-    ${isLocked ? item.color : `hover:-translate-y-1.5 hover:shadow-xl hover:scale-[1.02] hover:bg-slate-800/50 ${item.color}`}
+    ${isLocked ? item.color : `hover:-translate-y-1 hover:shadow-xl hover:scale-[1.02] hover:bg-slate-800/50 ${item.color}`}
   `;
 
   if (isLocked) {
@@ -360,22 +391,19 @@ export default function App() {
 
       <main
         className={`
-        relative z-10 max-w-md mx-auto min-h-screen pb-12
+        relative z-10 max-w-md mx-auto min-h-screen pb-32
         transition-opacity duration-1000 ease-in-out
         ${mounted ? 'opacity-100' : 'opacity-0'}
       `}
       >
         <Header profile={profileData} />
 
-        <div className="px-5 space-y-10">
+        <div className="px-5 space-y-10 mt-6">
           {links.map((category, idx) => (
             <div
               key={idx}
-              className="animate-slide-up opacity-0"
-              style={{ 
-                animation: mounted ? `slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards` : 'none',
-                animationDelay: `${idx * 150 + 200}ms` 
-              }}
+              className={`animate-slide-up opacity-0 delay-${idx * 200 + 300}`}
+              style={mounted ? { animation: 'slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards' } : {}}
             >
               {/* Category Title */}
               <div className="flex items-center gap-4 mb-5">
@@ -406,8 +434,8 @@ export default function App() {
           <p className="font-medium tracking-wide">© {new Date().getFullYear()} Null Cloud. All rights reserved.</p>
           <div className="flex justify-center gap-2.5 mt-4 opacity-50">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" style={{ animationDelay: '0.2s' }}></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" style={{ animationDelay: '0.4s' }}></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse delay-200"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse delay-500"></span>
           </div>
         </footer>
       </main>
