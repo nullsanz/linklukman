@@ -1,10 +1,16 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   
+  color-scheme: light;
+  background-color: #f8fafc;
+}
+
+.dark {
   color-scheme: dark;
   background-color: #030014;
 }
@@ -23,8 +29,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #334155;
+  background-color: #cbd5e1;
   border-radius: 20px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #334155;
 }
 
 .bg-noise {
