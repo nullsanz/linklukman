@@ -31,22 +31,37 @@ import {
 } from 'lucide-react';
 
 // --- Utility: Micro-interaction Sound ---
+let audioCtx = null;
+const initAudio = () => {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+};
+if (typeof window !== 'undefined') {
+  window.addEventListener('click', initAudio, { once: true });
+  window.addEventListener('touchstart', initAudio, { once: true });
+}
+
 const playPop = () => {
   try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') return; // Must wait for user interaction
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(audioCtx.destination);
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
     osc.start();
-    osc.stop(ctx.currentTime + 0.1);
+    osc.stop(audioCtx.currentTime + 0.1);
   } catch (e) {}
 };
 
@@ -233,9 +248,9 @@ const QRModal = ({ isOpen, onClose }) => (
 const CompactStickyHeader = ({ scrollY, isDark, onShare, onQr }) => {
   const [isCopied, setIsCopied] = useState(false);
   
-  // Fade in the compact header when scrolled past 180px
-  const headerOpacity = useTransform(scrollY, [180, 220], [0, 1]);
-  const headerY = useTransform(scrollY, [180, 220], [-20, 0]);
+  // Fade in the compact header when scrolled past 150px
+  const headerOpacity = useTransform(scrollY, [150, 200], [0, 1]);
+  const headerY = useTransform(scrollY, [150, 200], [-20, 0]);
   
   // Conditionally disable pointer events to avoid blocking clicks when hidden
   const [pointerEvents, setPointerEvents] = useState('none');
@@ -278,9 +293,9 @@ const CompactStickyHeader = ({ scrollY, isDark, onShare, onQr }) => {
 };
 
 // The main static header with all info
-const ProfileHeader = ({ onShare, onQr, onSaveContact }) => {
+const ProfileHeader = ({ onShare, onQr, onSaveContact, opacity, scale, y }) => {
   return (
-    <div className="w-full flex flex-col items-center pt-16 pb-4 px-4 relative z-10">
+    <motion.div style={{ opacity, scale, y }} className="w-full flex flex-col items-center pt-16 pb-4 px-4 relative z-10">
       <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 20 }} className="relative group mb-6">
         <motion.div
           animate={{ rotate: 360 }}
@@ -360,7 +375,7 @@ const ProfileHeader = ({ onShare, onQr, onSaveContact }) => {
           Simpan Kontak
         </motion.button>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -454,6 +469,11 @@ export default function App() {
   const [qrOpen, setQrOpen] = useState(false);
   const { scrollY } = useScroll();
 
+  // Parallax animation for ProfileHeader
+  const profileOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const profileScale = useTransform(scrollY, [0, 200], [1, 0.9]);
+  const profileY = useTransform(scrollY, [0, 200], [0, 50]);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') setIsDark(true);
@@ -525,8 +545,15 @@ END:VCARD`;
 
       <main className="relative z-10 max-w-4xl mx-auto pb-12 px-4 sm:px-6">
         
-        {/* The main static header */}
-        <ProfileHeader onShare={handleShare} onQr={handleQr} onSaveContact={handleSaveContact} />
+        {/* The main static header with parallax */}
+        <ProfileHeader 
+          onShare={handleShare} 
+          onQr={handleQr} 
+          onSaveContact={handleSaveContact} 
+          opacity={profileOpacity} 
+          scale={profileScale} 
+          y={profileY} 
+        />
 
         {/* Search Bar */}
         <motion.div 
@@ -579,7 +606,8 @@ END:VCARD`;
                 <motion.div 
                   variants={containerVariants} 
                   initial="hidden"
-                  animate="visible"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
                 >
                   {category.items.map((item) => (
