@@ -128,7 +128,8 @@ const links = [
     note: '📍 Harap join 1 grup saja. Proses ACC maksimal 1x24 jam.',
     items: [
       { id: 8, title: 'Grup Loker Bray 1', url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1', icon: <Users size={20} /> },
-      { id: 9, title: 'Grup Loker Bray 2', url: 'https://chat.whatsapp.com/D5Jv7eRkerbJMlRxfEfITm', icon: <Users size={20} /> },
+      { id: 9, title: 'Grup Loker Bray 2', url: 'https://chat.whatsapp.com/FrMMZ3MRF0AFZDPoZSnEH0', icon: <Users size={20} /> },
+      { id: 10, title: 'Grup Loker Bray 3', url: 'https://chat.whatsapp.com/CZoXRjchOKwFRCoLPelTsK', icon: <Users size={20} /> },
     ],
   },
   {
