@@ -242,7 +242,7 @@ const QRModal = ({ isOpen, onClose }) => (
   </AnimatePresence>
 );
 
-const StickyHeader = ({ scrollY }) => {
+const StickyHeader = ({ scrollY, isDark }) => {
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
 
@@ -250,7 +250,15 @@ const StickyHeader = ({ scrollY }) => {
   const headerY = useTransform(scrollY, [0, 150], [0, 0]);
   const scale = useTransform(scrollY, [0, 150], [1, 0.7]);
   const opacityBio = useTransform(scrollY, [0, 100], [1, 0]);
-  const bgOpacity = useTransform(scrollY, [0, 150], [0, 0.8]);
+  
+  // Safe color interpolation for Framer Motion
+  const backgroundColor = useTransform(
+    scrollY,
+    [0, 150],
+    isDark 
+      ? ['rgba(3, 0, 20, 0)', 'rgba(3, 0, 20, 0.85)'] 
+      : ['rgba(248, 250, 252, 0)', 'rgba(248, 250, 252, 0.85)']
+  );
 
   const handleShare = () => {
     playPop();
@@ -283,7 +291,7 @@ END:VCARD`;
       <QRModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />
       
       <motion.div
-        style={{ y: headerY, backgroundColor: `rgba(var(--bg-color-rgb), ${bgOpacity.get()})` }}
+        style={{ y: headerY, backgroundColor }}
         className="sticky top-0 z-40 w-full flex flex-col items-center pt-12 pb-4 px-4 backdrop-blur-md border-b border-transparent transition-colors duration-300"
       >
         <motion.div style={{ scale }} className="relative group mb-4 origin-top">
@@ -472,11 +480,9 @@ export default function App() {
     if (isDark) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
-      document.documentElement.style.setProperty('--bg-color-rgb', '3, 0, 20'); // For dark sticky header
     } else {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
-      document.documentElement.style.setProperty('--bg-color-rgb', '248, 250, 252'); // For light sticky header
     }
   }, [isDark]);
 
@@ -496,13 +502,13 @@ export default function App() {
   }, [searchQuery]);
 
   return (
-    <div className={`min-h-screen font-sans selection:bg-purple-500/30 overflow-x-hidden ${isDark ? 'dark text-slate-200' : 'text-slate-800'}`}>
+    <div className={`min-h-screen font-sans selection:bg-purple-500/30 overflow-x-clip ${isDark ? 'dark text-slate-200' : 'text-slate-800'}`}>
       <CustomCursor />
       <Toaster toastOptions={{ className: 'dark:bg-slate-800 dark:text-white dark:border-slate-700' }} />
       <Background isDark={isDark} />
       <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
 
-      <StickyHeader scrollY={scrollY} />
+      <StickyHeader scrollY={scrollY} isDark={isDark} />
 
       <main className="relative z-10 max-w-4xl mx-auto pb-12 px-4 sm:px-6 mt-8">
         {/* Search Bar */}
