@@ -32,35 +32,52 @@ import {
 
 // --- Utility: Micro-interaction Sound ---
 let audioCtx = null;
-const initAudio = () => {
-  if (!audioCtx) {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (AudioContext) audioCtx = new AudioContext();
-  }
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
+let unlocked = false;
+
+const initAndUnlockAudio = () => {
+  if (unlocked) return;
+  try {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        audioCtx = new AudioContext();
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().then(() => {
+        unlocked = true;
+      }).catch(() => {});
+    } else if (audioCtx && audioCtx.state === 'running') {
+      unlocked = true;
+    }
+  } catch (e) {}
 };
-if (typeof window !== 'undefined') {
-  window.addEventListener('click', initAudio, { once: true });
-  window.addEventListener('touchstart', initAudio, { once: true });
+
+if (typeof document !== 'undefined') {
+  // Attach to multiple interaction types to guarantee we capture a valid gesture
+  ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
+    document.addEventListener(evt, initAndUnlockAudio, { capture: true, passive: true });
+  });
 }
 
 const playPop = () => {
   try {
-    if (!audioCtx) return;
-    if (audioCtx.state === 'suspended') return; // Must wait for user interaction
+    if (!audioCtx || !unlocked) return;
     
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
     gain.connect(audioCtx.destination);
+    
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-    osc.start();
+    
+    // Increased volume to 0.5 (was 0.05) so it's actually audible
+    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    
+    osc.start(audioCtx.currentTime);
     osc.stop(audioCtx.currentTime + 0.1);
   } catch (e) {}
 };
