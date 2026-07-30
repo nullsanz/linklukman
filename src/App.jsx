@@ -47,9 +47,7 @@ const playPop = () => {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
     osc.start();
     osc.stop(ctx.currentTime + 0.1);
-  } catch (e) {
-    // Ignore if audio fails or is blocked by browser policy
-  }
+  } catch (e) {}
 };
 
 // --- Data Configuration ---
@@ -84,7 +82,7 @@ const links = [
         icon: <Globe size={24} />,
         isHero: true,
         isHot: true,
-        bgImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600&auto=format&fit=crop', // Abstract code bg
+        bgImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600&auto=format&fit=crop',
       },
       { id: 2, title: 'Web Portofolio 2', subtitle: 'lukman.anull.cloud', url: 'https://lukman.anull.cloud/', icon: <Briefcase size={20} /> },
       { id: 4, title: 'Dashboard Member LokerBray', subtitle: 'Member Area', url: 'https://lokerbrayy.anull.cloud/dashboard-member', icon: <Layers size={20} /> },
@@ -130,20 +128,10 @@ const CustomCursor = () => {
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    // Only show on non-touch devices
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
-    const updateMousePosition = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleMouseOver = (e) => {
-      if (e.target.closest('a, button')) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
-    };
+    const updateMousePosition = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    const handleMouseOver = (e) => setIsHovering(!!e.target.closest('a, button'));
 
     window.addEventListener('mousemove', updateMousePosition);
     window.addEventListener('mouseover', handleMouseOver);
@@ -158,7 +146,7 @@ const CustomCursor = () => {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100] mix-blend-difference border border-white"
+      className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100] mix-blend-difference border border-white hidden md:block"
       animate={{
         x: mousePosition.x - 16,
         y: mousePosition.y - 16,
@@ -242,144 +230,144 @@ const QRModal = ({ isOpen, onClose }) => (
   </AnimatePresence>
 );
 
-const StickyHeader = ({ scrollY, isDark }) => {
-  const [copied, setCopied] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
-
-  // Animate header size based on scroll
-  const headerY = useTransform(scrollY, [0, 150], [0, 0]);
-  const scale = useTransform(scrollY, [0, 150], [1, 0.7]);
-  const opacityBio = useTransform(scrollY, [0, 100], [1, 0]);
+// The dynamic compact header that appears when scrolling down
+const CompactStickyHeader = ({ scrollY, isDark, onShare, onQr }) => {
+  const [isCopied, setIsCopied] = useState(false);
   
-  // Safe color interpolation for Framer Motion
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 150],
-    isDark 
-      ? ['rgba(3, 0, 20, 0)', 'rgba(3, 0, 20, 0.85)'] 
-      : ['rgba(248, 250, 252, 0)', 'rgba(248, 250, 252, 0.85)']
-  );
+  // Fade in the compact header when scrolled past 180px
+  const headerOpacity = useTransform(scrollY, [180, 220], [0, 1]);
+  const headerY = useTransform(scrollY, [180, 220], [-20, 0]);
+  
+  // Conditionally disable pointer events to avoid blocking clicks when hidden
+  const [pointerEvents, setPointerEvents] = useState('none');
+  
+  useEffect(() => {
+    return headerOpacity.onChange((v) => {
+      setPointerEvents(v > 0.5 ? 'auto' : 'none');
+    });
+  }, [headerOpacity]);
 
-  const handleShare = () => {
-    playPop();
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    toast.success('Link berhasil disalin ke clipboard! 🚀', { position: 'top-center' });
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSaveContact = () => {
-    playPop();
-    const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${profileData.name}
-TITLE:Founder & Developer LokerBray
-TEL;TYPE=CELL:${profileData.phone}
-URL:https://nullsanz.anull.cloud/
-END:VCARD`;
-    const blob = new Blob([vcard], { type: 'text/vcard' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${profileData.name.replace(' ', '_')}.vcf`;
-    a.click();
-    toast.success('Kontak vCard berhasil diunduh! 📇', { position: 'top-center' });
+  const handleCopy = () => {
+    onShare();
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
-    <>
-      <QRModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />
-      
-      <motion.div
-        style={{ y: headerY, backgroundColor }}
-        className="sticky top-0 z-40 w-full flex flex-col items-center pt-12 pb-4 px-4 backdrop-blur-md border-b border-transparent transition-colors duration-300"
-      >
-        <motion.div style={{ scale }} className="relative group mb-4 origin-top">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 rounded-full opacity-60 dark:opacity-70 blur-md"
-          />
-          <div className="relative p-1 bg-white dark:bg-[#030014] rounded-full transition-colors duration-500">
-            <motion.img
-              whileHover={{ scale: 1.05 }}
-              src={profileData.avatarUrl}
-              alt={profileData.name}
-              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-white dark:border-[#030014] object-cover shadow-2xl transition-colors duration-500"
-            />
-            {/* Share Button */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleShare}
-              className="absolute bottom-0 right-0 p-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full border border-slate-200 dark:border-slate-600/50 text-slate-700 dark:text-white hover:text-purple-500 dark:hover:text-cyan-400 shadow-xl z-10"
-              title="Copy Link Profile"
-            >
-              {copied ? <Check size={14} className="text-green-500" /> : <Share2 size={14} />}
-            </motion.button>
-            {/* QR Button */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => { playPop(); setQrOpen(true); }}
-              className="absolute top-0 right-0 p-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full border border-slate-200 dark:border-slate-600/50 text-slate-700 dark:text-white hover:text-purple-500 dark:hover:text-cyan-400 shadow-xl z-10"
-              title="Tampilkan QR Code"
-            >
-              <QrCode size={14} />
-            </motion.button>
-          </div>
-        </motion.div>
-
-        <motion.h1 style={{ scale }} className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white tracking-wide drop-shadow-sm dark:drop-shadow-md origin-top">
+    <motion.div 
+      style={{ opacity: headerOpacity, y: headerY, pointerEvents }}
+      className={`fixed top-0 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between backdrop-blur-lg border-b shadow-sm transition-colors duration-300 ${
+        isDark ? 'bg-[#030014]/80 border-slate-800' : 'bg-white/80 border-slate-200'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <img src={profileData.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
+        <span className="font-bold text-sm sm:text-base text-slate-800 dark:text-white truncate max-w-[150px] sm:max-w-[200px]">
           {profileData.name}
-        </motion.h1>
+        </span>
+      </div>
+      <div className="flex items-center gap-2 pr-14">
+        <button onClick={onQr} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-500 transition-colors">
+          <QrCode size={16} />
+        </button>
+        <button onClick={handleCopy} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-500 transition-colors">
+          {isCopied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+        </button>
+      </div>
+    </motion.div>
+  );
+};
 
-        <motion.div style={{ opacity: opacityBio }} className="flex flex-col items-center">
-          <p className="mt-1 text-sm md:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500 dark:from-purple-400 dark:to-cyan-400 tracking-wide">
-            {profileData.bio}
-          </p>
-          <p className="mt-2 text-slate-500 dark:text-slate-400 text-xs sm:text-sm max-w-md leading-relaxed font-medium text-center">
-            {profileData.miniResume}
-          </p>
-          
-          {/* Action Buttons */}
-          <div className="flex items-center justify-center gap-x-4 sm:gap-x-6 mt-5">
-            {socials.map((social) => (
-              <motion.a
-                onMouseEnter={playPop}
-                whileHover={{ y: -5, scale: 1.1, borderColor: '#a855f7', color: '#a855f7' }}
-                whileTap={{ scale: 0.95 }}
-                key={social.id}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={social.title}
-                className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md bg-white/60 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 shadow-md transition-colors duration-300"
-              >
-                {social.icon}
-              </motion.a>
-            ))}
-          </div>
-
-          <motion.button
+// The main static header with all info
+const ProfileHeader = ({ onShare, onQr, onSaveContact }) => {
+  return (
+    <div className="w-full flex flex-col items-center pt-16 pb-4 px-4 relative z-10">
+      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 20 }} className="relative group mb-6">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 rounded-full opacity-60 dark:opacity-70 blur-md"
+        />
+        <div className="relative p-1 bg-white dark:bg-[#030014] rounded-full transition-colors duration-500">
+          <motion.img
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleSaveContact}
-            className="mt-6 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm shadow-lg hover:shadow-xl transition-all"
-          >
-            <Download size={16} />
-            Simpan Kontak
-          </motion.button>
-        </motion.div>
+            src={profileData.avatarUrl}
+            alt={profileData.name}
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-white dark:border-[#030014] object-cover shadow-2xl transition-colors duration-500"
+          />
+        </div>
       </motion.div>
-    </>
+
+      <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-wide drop-shadow-sm dark:drop-shadow-md text-center">
+        {profileData.name}
+      </motion.h1>
+
+      <motion.p variants={itemVariants} className="mt-1 text-sm md:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500 dark:from-purple-400 dark:to-cyan-400 tracking-wide text-center">
+        {profileData.bio}
+      </motion.p>
+      
+      <motion.p variants={itemVariants} className="mt-3 text-slate-500 dark:text-slate-400 text-xs sm:text-sm max-w-md leading-relaxed font-medium text-center">
+        {profileData.miniResume}
+      </motion.p>
+      
+      {/* Social Icons */}
+      <motion.div variants={itemVariants} className="flex items-center justify-center gap-x-4 sm:gap-x-6 mt-6">
+        {socials.map((social) => (
+          <motion.a
+            onMouseEnter={playPop}
+            whileHover={{ y: -5, scale: 1.1, borderColor: '#a855f7', color: '#a855f7' }}
+            whileTap={{ scale: 0.95 }}
+            key={social.id}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={social.title}
+            className="flex items-center justify-center w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md bg-white/60 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 shadow-md transition-colors duration-300"
+          >
+            {social.icon}
+          </motion.a>
+        ))}
+      </motion.div>
+
+      {/* Action Buttons Row */}
+      <motion.div variants={itemVariants} className="flex flex-wrap justify-center items-center gap-3 mt-8">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onQr}
+          className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:text-purple-500 transition-colors"
+          title="QR Code"
+        >
+          <QrCode size={18} />
+        </motion.button>
+        
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onShare}
+          className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:text-purple-500 transition-colors"
+          title="Share"
+        >
+          <Share2 size={18} />
+        </motion.button>
+        
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onSaveContact}
+          className="flex items-center gap-2 px-6 h-12 rounded-2xl bg-slate-800 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm shadow-lg hover:shadow-xl hover:bg-slate-700 dark:hover:bg-slate-100 transition-all"
+        >
+          <Download size={18} />
+          Simpan Kontak
+        </motion.button>
+      </motion.div>
+    </div>
   );
 };
 
 const LinkCard = ({ item }) => {
   const isLocked = item.locked;
   
-  // Define colors per category
   const colorMap = {
     blue: 'text-blue-500 dark:text-cyan-400 group-hover:text-blue-600 dark:group-hover:text-cyan-300',
     green: 'text-emerald-500 dark:text-emerald-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-300',
@@ -449,17 +437,13 @@ const LinkCard = ({ item }) => {
       rel="noopener noreferrer"
       className={`${baseClasses} no-underline hover:border-purple-300 dark:hover:border-purple-500/50 hover:bg-white/90 dark:hover:bg-slate-800/60 hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300`}
     >
-      {/* Background Image for Hero */}
       {item.isHero && item.bgImage && (
         <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20 transition-opacity duration-500 group-hover:opacity-20 dark:group-hover:opacity-40">
           <img src={item.bgImage} alt="bg" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-white dark:from-[#030014] via-white/80 dark:via-[#030014]/80 to-transparent" />
         </div>
       )}
-      
-      {/* Glow effect on hover */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-100 dark:via-cyan-500/0 to-purple-500/0 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-10 transition-opacity duration-500 pointer-events-none z-0" />
-      
       {CardContent}
     </motion.a>
   );
@@ -468,6 +452,7 @@ const LinkCard = ({ item }) => {
 export default function App() {
   const [isDark, setIsDark] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [qrOpen, setQrOpen] = useState(false);
   const { scrollY } = useScroll();
 
   useEffect(() => {
@@ -488,10 +473,37 @@ export default function App() {
 
   const toggleTheme = () => setIsDark(!isDark);
 
-  // Filter links based on search
+  const handleShare = () => {
+    playPop();
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Link berhasil disalin ke clipboard! 🚀', { position: 'top-center' });
+  };
+
+  const handleQr = () => {
+    playPop();
+    setQrOpen(true);
+  };
+
+  const handleSaveContact = () => {
+    playPop();
+    const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${profileData.name}
+TITLE:Founder & Developer LokerBray
+TEL;TYPE=CELL:${profileData.phone}
+URL:https://nullsanz.anull.cloud/
+END:VCARD`;
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${profileData.name.replace(' ', '_')}.vcf`;
+    a.click();
+    toast.success('Kontak vCard berhasil diunduh! 📇', { position: 'top-center' });
+  };
+
   const filteredLinks = useMemo(() => {
     if (!searchQuery.trim()) return links;
-    
     return links.map(category => {
       const filteredItems = category.items.filter(item => 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -507,15 +519,21 @@ export default function App() {
       <Toaster toastOptions={{ className: 'dark:bg-slate-800 dark:text-white dark:border-slate-700' }} />
       <Background isDark={isDark} />
       <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
+      <QRModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />
 
-      <StickyHeader scrollY={scrollY} isDark={isDark} />
+      {/* The dynamically appearing compact header on scroll */}
+      <CompactStickyHeader scrollY={scrollY} isDark={isDark} onShare={handleShare} onQr={handleQr} />
 
-      <main className="relative z-10 max-w-4xl mx-auto pb-12 px-4 sm:px-6 mt-8">
+      <main className="relative z-10 max-w-4xl mx-auto pb-12 px-4 sm:px-6">
+        
+        {/* The main static header */}
+        <ProfileHeader onShare={handleShare} onQr={handleQr} onSaveContact={handleSaveContact} />
+
         {/* Search Bar */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 max-w-lg mx-auto"
+          className="mb-10 max-w-lg mx-auto mt-6"
         >
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -542,7 +560,6 @@ export default function App() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                {/* Category Title */}
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600/50 to-transparent" />
                   <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-purple-600 dark:text-cyan-400/80">
@@ -560,7 +577,6 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Grid Layout Container */}
                 <motion.div 
                   variants={containerVariants} 
                   initial="hidden"
@@ -573,11 +589,7 @@ export default function App() {
                 </motion.div>
               </motion.div>
             )) : (
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                className="text-center py-20 text-slate-500 dark:text-slate-400"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 text-slate-500 dark:text-slate-400">
                 <Search size={48} className="mx-auto mb-4 opacity-20" />
                 <p>Tidak ada link yang cocok dengan pencarian "{searchQuery}"</p>
               </motion.div>
@@ -585,13 +597,7 @@ export default function App() {
           </AnimatePresence>
         </div>
 
-        {/* Footer */}
-        <motion.footer 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="mt-24 text-center text-xs text-slate-400 dark:text-slate-500 pb-10"
-        >
+        <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-24 text-center text-xs text-slate-400 dark:text-slate-500 pb-10">
           <p className="font-medium tracking-wide">© {new Date().getFullYear()} Null Cloud. All rights reserved.</p>
         </motion.footer>
       </main>
