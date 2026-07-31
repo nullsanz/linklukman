@@ -194,17 +194,29 @@ const CustomCursor = () => {
 
 const Background = ({ isDark }) => (
   <div className={`fixed inset-0 z-0 overflow-hidden transition-colors duration-700 ${isDark ? 'bg-[#030014]' : 'bg-slate-50'}`}>
+    {/* Optimized for low-end devices: Using radial-gradient instead of expensive filter: blur() */}
     <motion.div
-      animate={{ scale: [1, 1.2, 1], opacity: isDark ? [0.3, 0.5, 0.3] : [0.15, 0.25, 0.15], rotate: [0, 90, 0] }}
-      transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-      className={`absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[140px] ${isDark ? 'bg-purple-600/30' : 'bg-purple-400/40'}`}
+      animate={{ x: [0, 30, -10, 0], y: [0, -20, 20, 0] }}
+      transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+      style={{
+        background: isDark 
+          ? 'radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 60%)' 
+          : 'radial-gradient(circle, rgba(192, 132, 252, 0.3) 0%, transparent 60%)'
+      }}
+      className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] min-w-[500px] min-h-[500px] rounded-full pointer-events-none will-change-transform"
     />
     <motion.div
-      animate={{ scale: [1, 1.3, 1], opacity: isDark ? [0.2, 0.4, 0.2] : [0.1, 0.2, 0.1], rotate: [0, -90, 0] }}
-      transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-      className={`absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[140px] ${isDark ? 'bg-cyan-600/20' : 'bg-cyan-400/30'}`}
+      animate={{ x: [0, -30, 10, 0], y: [0, 20, -20, 0] }}
+      transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+      style={{
+        background: isDark 
+          ? 'radial-gradient(circle, rgba(8, 145, 178, 0.12) 0%, transparent 60%)' 
+          : 'radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, transparent 60%)'
+      }}
+      className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] min-w-[500px] min-h-[500px] rounded-full pointer-events-none will-change-transform"
     />
-    <div className={`absolute inset-0 bg-noise mix-blend-overlay pointer-events-none ${isDark ? 'opacity-[0.06]' : 'opacity-[0.03]'}`} />
+    {/* Removed mix-blend-overlay which is notoriously slow on mobile GPUs */}
+    <div className={`absolute inset-0 bg-noise pointer-events-none ${isDark ? 'opacity-[0.03]' : 'opacity-[0.02]'}`} />
   </div>
 );
 
