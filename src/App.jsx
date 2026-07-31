@@ -23,6 +23,7 @@ import {
   Github,
   Music,
   Moon,
+  Megaphone,
   Sun,
   Search,
   Download,
@@ -130,6 +131,7 @@ const links = [
       { id: 8, title: 'Grup Loker Bray 1', url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1', icon: <Users size={20} /> },
       { id: 9, title: 'Grup Loker Bray 2', url: 'https://chat.whatsapp.com/FrMMZ3MRF0AFZDPoZSnEH0', icon: <Users size={20} /> },
       { id: 10, title: 'Grup Loker Bray 3', url: 'https://chat.whatsapp.com/CZoXRjchOKwFRCoLPelTsK', icon: <Users size={20} /> },
+      { id: 101, title: 'Saluran Info Resmi', url: 'https://whatsapp.com/channel/0029Vb8paaO6buMC6R2RoL2T', icon: <Megaphone size={20} /> },
     ],
   },
   {
