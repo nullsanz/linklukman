@@ -119,6 +119,7 @@ const links = [
       { id: 2, title: 'Web Portofolio 2', subtitle: 'lukman.anull.cloud', url: 'https://lukman.anull.cloud/', icon: <Briefcase size={20} /> },
       { id: 4, title: 'Dashboard Member LokerBray', subtitle: 'Member Area', url: 'https://lokerbrayy.anull.cloud/dashboard-member', icon: <Layers size={20} />, isHot: true },
       { id: 5, title: 'CV Builder Otomatis', subtitle: 'Buat CV secara gratis', url: 'https://lokerbrayy.anull.cloud/cv-builder', icon: <FileText size={20} />, isHot: true },
+      { id: 55, title: 'Surat Lamaran Kerja Builder', subtitle: '18 Template Resmi & AI Penulis', url: 'https://lokerbrayy.anull.cloud/lamaran-builder', icon: <FileText size={20} />, isHot: true },
       { id: 6, title: 'Doc Merger & Compressor', subtitle: 'Gabungkan PDF Anda', url: 'https://lokerbrayy.anull.cloud/doc-merger', icon: <Briefcase size={20} />, isHot: true },
       { id: 7, title: 'Test Psikotes Online', subtitle: 'testbrayy.anull.cloud', url: 'https://testbrayy.anull.cloud/', icon: <BrainCircuit size={20} />, isHot: true },
     ],
