@@ -135,6 +135,7 @@ const links = [
       { id: 9, title: 'Grup Loker Bray 2', url: 'https://chat.whatsapp.com/FrMMZ3MRF0AFZDPoZSnEH0', icon: <Users size={20} /> },
       { id: 10, title: 'Grup Loker Bray 3', url: 'https://chat.whatsapp.com/CZoXRjchOKwFRCoLPelTsK', icon: <Users size={20} /> },
       { id: 101, title: 'Saluran Info Resmi', url: 'https://whatsapp.com/channel/0029Vb8paaO6buMC6R2RoL2T', icon: <Megaphone size={20} /> },
+      { id: 102, title: 'TikTok Loker Brayy', subtitle: '@lokerbrayy.anull.cloud - Info lowongan, tips interview & psikotes', url: 'https://www.tiktok.com/@lokerbrayy.anull.cloud', icon: <Music size={20} />, isHot: true, color: 'pink' },
     ],
   },
   {
@@ -421,8 +422,9 @@ const LinkCard = ({ item }) => {
     blue: 'text-blue-500 dark:text-cyan-400 group-hover:text-blue-600 dark:group-hover:text-cyan-300',
     green: 'text-emerald-500 dark:text-emerald-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-300',
     orange: 'text-orange-500 dark:text-amber-400 group-hover:text-orange-600 dark:group-hover:text-amber-300',
+    pink: 'text-pink-500 dark:text-pink-400 group-hover:text-pink-600 dark:group-hover:text-pink-300',
   };
-  const iconColor = colorMap[item.categoryColor] || colorMap.blue;
+  const iconColor = colorMap[item.color || item.categoryColor] || colorMap.blue;
 
   const CardContent = (
     <>
