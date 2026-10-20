@@ -37,7 +37,9 @@ import {
   Cpu,
   ShieldCheck,
   Send,
-  Copy
+  Copy,
+  User,
+  Home
 } from 'lucide-react';
 
 // --- Micro-interaction Audio Engine ---
@@ -317,7 +319,7 @@ const BrutRetroCard = ({ item }) => {
       <div>
         <div className="flex items-start justify-between gap-3 mb-4">
           <div
-            className="flex items-center justify-center w-12 h-12 border-2 border-black text-black shrink-0 shadow-[2px_2px_0_0_#000]"
+            className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 border-2 border-black text-black shrink-0 shadow-[2px_2px_0_0_#000]"
             style={{ backgroundColor: accent }}
           >
             {item.icon}
@@ -325,7 +327,7 @@ const BrutRetroCard = ({ item }) => {
 
           <div className="flex items-center gap-2 flex-wrap justify-end">
             {item.badge && (
-              <span className="inline-block px-2.5 py-1 text-[11px] font-mono font-bold uppercase tracking-wider border-2 border-black bg-[#f9f4da] text-black shadow-[2px_2px_0_0_#000]">
+              <span className="inline-block px-2.5 py-1 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider border-2 border-black bg-[#f9f4da] text-black shadow-[2px_2px_0_0_#000]">
                 {item.badge}
               </span>
             )}
@@ -414,7 +416,7 @@ const BrutQRModal = ({ isOpen, onClose, url, profileData }) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -479,7 +481,31 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('ALL');
   const [copiedLink, setCopiedLink] = useState(false);
   const [cliTab, setCliTab] = useState('SPECS');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('top');
+
+  // Scrollspy: detect active section for navigation highlight
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 180;
+      const sectionIds = ['top', 'portfolio', 'community', 'anulcopy', 'cli-specs'];
+      
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveSection(id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Handle Share Link
   const handleShare = () => {
@@ -547,7 +573,7 @@ END:VCARD`;
   }, [searchQuery, activeTab]);
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-[#f9f4da] bg-brut-grid flex flex-col justify-between selection:bg-[#00ff88] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#1a1a1a] text-[#f9f4da] bg-brut-grid flex flex-col justify-between selection:bg-[#00ff88] selection:text-black">
       <Toaster />
       <BrutQRModal
         isOpen={qrOpen}
@@ -557,14 +583,14 @@ END:VCARD`;
       />
 
       {/* =========================================================================
-          TOP NAVIGATION BAR (BrutStack Navbar)
+          DESKTOP & WEB TOP NAVIGATION BAR (Fixed & Stays Permanently on Scroll)
       ========================================================================== */}
-      <header className="sticky top-0 z-40 w-full border-b-2 border-black bg-[#1a1a1a]/95 backdrop-blur-md">
+      <header className="fixed top-0 left-0 right-0 z-40 w-full border-b-2 border-black bg-[#1a1a1a]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-stretch justify-between h-16">
           {/* Brand Logo */}
           <a
-            href="#"
-            onMouseEnter={playPop}
+            href="#top"
+            onClick={() => playPop()}
             className="flex items-center gap-3 no-underline my-auto group"
           >
             <div className="flex items-center justify-center w-9 h-9 border-2 border-black bg-[#00ff88] text-black font-head font-extrabold text-sm shadow-[2px_2px_0_0_#000] group-hover:bg-[#fcba28] transition-colors">
@@ -580,33 +606,60 @@ END:VCARD`;
             </div>
           </a>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links with Active Scrollspy Highlight */}
           <nav className="hidden lg:flex items-stretch divide-x-2 divide-black border-x-2 border-black font-mono text-xs uppercase tracking-wider font-bold">
             <a
+              href="#top"
+              onClick={() => playPop()}
+              className={`flex items-center px-5 transition-colors ${
+                activeSection === 'top'
+                  ? 'bg-[#00ff88] text-black shadow-inner'
+                  : 'hover:text-[#fcba28] hover:bg-[#141414]'
+              }`}
+            >
+              Bio Profil
+            </a>
+            <a
               href="#portfolio"
-              onMouseEnter={playPop}
-              className="flex items-center px-6 hover:text-[#fcba28] hover:bg-[#141414] transition-colors"
+              onClick={() => playPop()}
+              className={`flex items-center px-5 transition-colors ${
+                activeSection === 'portfolio'
+                  ? 'bg-[#14b6e5] text-black shadow-inner'
+                  : 'hover:text-[#14b6e5] hover:bg-[#141414]'
+              }`}
             >
               Portofolio
             </a>
             <a
               href="#community"
-              onMouseEnter={playPop}
-              className="flex items-center px-6 hover:text-[#00ff88] hover:bg-[#141414] transition-colors"
+              onClick={() => playPop()}
+              className={`flex items-center px-5 transition-colors ${
+                activeSection === 'community'
+                  ? 'bg-[#00ff88] text-black shadow-inner'
+                  : 'hover:text-[#00ff88] hover:bg-[#141414]'
+              }`}
             >
               Komunitas
             </a>
             <a
               href="#anulcopy"
-              onMouseEnter={playPop}
-              className="flex items-center px-6 hover:text-[#14b6e5] hover:bg-[#141414] transition-colors"
+              onClick={() => playPop()}
+              className={`flex items-center px-5 transition-colors ${
+                activeSection === 'anulcopy'
+                  ? 'bg-[#fcba28] text-black shadow-inner'
+                  : 'hover:text-[#fcba28] hover:bg-[#141414]'
+              }`}
             >
               Anul Copy
             </a>
             <a
               href="#cli-specs"
-              onMouseEnter={playPop}
-              className="flex items-center px-6 hover:text-[#c084fc] hover:bg-[#141414] transition-colors"
+              onClick={() => playPop()}
+              className={`flex items-center px-5 transition-colors ${
+                activeSection === 'cli-specs'
+                  ? 'bg-[#c084fc] text-black shadow-inner'
+                  : 'hover:text-[#c084fc] hover:bg-[#141414]'
+              }`}
             >
               Developer Specs
             </a>
@@ -642,63 +695,14 @@ END:VCARD`;
               <Send size={15} />
               <span className="hidden xs:inline">CHAT WA</span>
             </a>
-
-            {/* Mobile Hamburger Button */}
-            <button
-              onClick={() => { playPop(); setMobileMenuOpen(!mobileMenuOpen); }}
-              className="lg:hidden p-2 border-2 border-black bg-[#fcba28] text-black shadow-[2px_2px_0_0_#000]"
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
         </div>
-
-        {/* Mobile Dropdown Drawer */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden border-t-2 border-black bg-[#141414] px-4 py-4 space-y-2 font-mono text-xs uppercase font-bold"
-            >
-              <a
-                href="#portfolio"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#fcba28] hover:text-black"
-              >
-                ➔ Portofolio & Web Apps
-              </a>
-              <a
-                href="#community"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#00ff88] hover:text-black"
-              >
-                ➔ Komunitas Loker Bray
-              </a>
-              <a
-                href="#anulcopy"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#14b6e5] hover:text-black"
-              >
-                ➔ Anul Copy Centre
-              </a>
-              <a
-                href="#cli-specs"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#c084fc] hover:text-black"
-              >
-                ➔ Developer Specs & CLI
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </header>
 
       {/* =========================================================================
           HERO SECTION (BrutStack Hero Style)
       ========================================================================== */}
-      <section className="relative w-full pt-10 pb-14 sm:pt-14 sm:pb-20 border-b-2 border-black">
+      <section id="top" className="relative w-full pt-24 pb-14 sm:pt-28 sm:pb-20 border-b-2 border-black scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Top Status & Role Pill */}
@@ -790,7 +794,7 @@ END:VCARD`;
                   <button
                     onClick={handleDownloadVCard}
                     onMouseEnter={playPop}
-                    className="px-4 py-2 border-2 border-black bg-[#f9f4da] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-[#fcba28] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
+                    className="px-4 py-2.5 border-2 border-black bg-[#f9f4da] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-[#fcba28] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
                   >
                     <Download size={15} /> SIMPAN KONTAK (VCARD)
                   </button>
@@ -798,7 +802,7 @@ END:VCARD`;
                   <a
                     href="#portfolio"
                     onMouseEnter={playPop}
-                    className="px-4 py-2 border-2 border-black bg-[#00ff88] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-white active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
+                    className="px-4 py-2.5 border-2 border-black bg-[#00ff88] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-white active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
                   >
                     JELAJAHI PORTOFOLIO ➔
                   </a>
@@ -924,7 +928,7 @@ END:VCARD`;
       {/* =========================================================================
           DYNAMIC LINK CATEGORIES SECTIONS (BrutStack Bento Grid)
       ========================================================================== */}
-      <main className="w-full space-y-16 pb-20">
+      <main className="w-full space-y-16 pb-28 lg:pb-20">
         {filteredCategories.length > 0 ? (
           filteredCategories.map((section) => (
             <section
@@ -1096,6 +1100,93 @@ END:VCARD`;
       </main>
 
       {/* =========================================================================
+          MOBILE & ANDROID BOTTOM NAVIGATION BAR (Thumb-Friendly Brutalist Dock)
+      ========================================================================== */}
+      <nav
+        aria-label="Mobile Navigation Dock"
+        className="lg:hidden fixed bottom-3 left-3 right-3 sm:bottom-4 sm:left-6 sm:right-6 max-w-md mx-auto z-50 pointer-events-auto"
+      >
+        <div className="bg-[#141414]/95 backdrop-blur-md border-2 border-black p-1.5 shadow-[4px_4px_0_0_#000] flex items-center justify-around">
+          {/* Tab 1: Bio */}
+          <a
+            href="#top"
+            onClick={() => playPop()}
+            className={`flex flex-col items-center justify-center py-1.5 px-2.5 rounded-sm transition-all ${
+              activeSection === 'top'
+                ? 'bg-[#00ff88] text-black font-bold shadow-[2px_2px_0_0_#000]'
+                : 'text-[#a3a3a3] hover:text-white'
+            }`}
+          >
+            <Terminal size={17} />
+            <span className="font-mono text-[9px] uppercase tracking-wider mt-0.5">BIO</span>
+          </a>
+
+          {/* Tab 2: Proyek */}
+          <a
+            href="#portfolio"
+            onClick={() => playPop()}
+            className={`flex flex-col items-center justify-center py-1.5 px-2.5 rounded-sm transition-all ${
+              activeSection === 'portfolio'
+                ? 'bg-[#14b6e5] text-black font-bold shadow-[2px_2px_0_0_#000]'
+                : 'text-[#a3a3a3] hover:text-white'
+            }`}
+          >
+            <Layers size={17} />
+            <span className="font-mono text-[9px] uppercase tracking-wider mt-0.5">PROYEK</span>
+          </a>
+
+          {/* Tab 3: Komunitas */}
+          <a
+            href="#community"
+            onClick={() => playPop()}
+            className={`flex flex-col items-center justify-center py-1.5 px-2.5 rounded-sm transition-all ${
+              activeSection === 'community'
+                ? 'bg-[#00ff88] text-black font-bold shadow-[2px_2px_0_0_#000]'
+                : 'text-[#a3a3a3] hover:text-white'
+            }`}
+          >
+            <Users size={17} />
+            <span className="font-mono text-[9px] uppercase tracking-wider mt-0.5">GRUP</span>
+          </a>
+
+          {/* Tab 4: Fotocopy */}
+          <a
+            href="#anulcopy"
+            onClick={() => playPop()}
+            className={`flex flex-col items-center justify-center py-1.5 px-2.5 rounded-sm transition-all ${
+              activeSection === 'anulcopy'
+                ? 'bg-[#fcba28] text-black font-bold shadow-[2px_2px_0_0_#000]'
+                : 'text-[#a3a3a3] hover:text-white'
+            }`}
+          >
+            <Printer size={17} />
+            <span className="font-mono text-[9px] uppercase tracking-wider mt-0.5">FOTOCOPY</span>
+          </a>
+
+          {/* Tab 5: QR Modal Trigger */}
+          <button
+            onClick={() => { playPop(); setQrOpen(true); }}
+            className="flex flex-col items-center justify-center py-1.5 px-2.5 text-[#a3a3a3] hover:text-[#c084fc] transition-all"
+          >
+            <QrCode size={17} />
+            <span className="font-mono text-[9px] uppercase tracking-wider mt-0.5">QR</span>
+          </button>
+
+          {/* Tab 6: Direct WA Chat Button */}
+          <a
+            href={`https://wa.me/${profileData.cleanPhone}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => playPop()}
+            className="flex items-center gap-1 py-1.5 px-2.5 bg-[#00ff88] text-black border border-black shadow-[2px_2px_0_0_#000] font-head font-bold text-[10px] uppercase hover:bg-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          >
+            <MessageCircle size={15} />
+            <span>CHAT</span>
+          </a>
+        </div>
+      </nav>
+
+      {/* =========================================================================
           FOOTER (BrutStack 3-Column Grid Footer)
       ========================================================================== */}
       <footer className="w-full border-t-2 border-black bg-[#141414] text-[#f9f4da]">
@@ -1137,12 +1228,12 @@ END:VCARD`;
             </span>
 
             <div className="grid grid-cols-2 gap-3 font-mono text-xs uppercase font-bold">
-              <a href="#portfolio" className="hover:text-[#00ff88] transition-colors py-1">➔ Portofolio</a>
-              <a href="#community" className="hover:text-[#fcba28] transition-colors py-1">➔ Komunitas</a>
-              <a href="#anulcopy" className="hover:text-[#14b6e5] transition-colors py-1">➔ Anul Copy</a>
+              <a href="#top" className="hover:text-[#00ff88] transition-colors py-1">➔ Bio Profil</a>
+              <a href="#portfolio" className="hover:text-[#14b6e5] transition-colors py-1">➔ Portofolio</a>
+              <a href="#community" className="hover:text-[#00ff88] transition-colors py-1">➔ Komunitas</a>
+              <a href="#anulcopy" className="hover:text-[#fcba28] transition-colors py-1">➔ Anul Copy</a>
               <a href="#cli-specs" className="hover:text-[#c084fc] transition-colors py-1">➔ CLI Specs</a>
               <a href="https://wa.me/6285718532060" target="_blank" rel="noreferrer" className="hover:text-[#00ff88] transition-colors py-1">➔ WhatsApp</a>
-              <a href="https://github.com/nullsanz" target="_blank" rel="noreferrer" className="hover:text-white transition-colors py-1">➔ GitHub</a>
             </div>
 
             <div className="mt-8 p-3 border-2 border-black bg-[#1a1a1a] shadow-[3px_3px_0_0_#000]">
