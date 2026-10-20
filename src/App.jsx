@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'sonner';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
-  Instagram,
-  Linkedin,
   Globe,
-  MessageCircle,
   Briefcase,
   Users,
   BrainCircuit,
@@ -15,72 +12,73 @@ import {
   ExternalLink,
   FileText,
   Layers,
-  Lock,
   Printer,
   Crop,
   Image as ImageIcon,
-  AlertCircle,
+  AlertTriangle,
   Github,
   Music,
-  Moon,
   Megaphone,
-  Sun,
   Search,
   Download,
   QrCode,
   Mail,
-  X
+  X,
+  MessageCircle,
+  Instagram,
+  Linkedin,
+  Terminal,
+  Code2,
+  Sparkles,
+  ArrowUpRight,
+  Menu,
+  ChevronDown,
+  ChevronUp,
+  Cpu,
+  ShieldCheck,
+  Send,
+  Copy
 } from 'lucide-react';
 
-// --- Utility: Micro-interaction Sound ---
+// --- Micro-interaction Audio Engine ---
 let audioCtx = null;
-let unlocked = false;
+let audioUnlocked = false;
 
-const initAndUnlockAudio = () => {
-  if (unlocked) return;
+const initAudio = () => {
+  if (audioUnlocked) return;
   try {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => { audioUnlocked = true; }).catch(() => {});
+      } else {
+        audioUnlocked = true;
       }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume().then(() => {
-        unlocked = true;
-      }).catch(() => {});
-    } else if (audioCtx && audioCtx.state === 'running') {
-      unlocked = true;
     }
   } catch (e) {}
 };
 
 if (typeof document !== 'undefined') {
-  // Attach to multiple interaction types to guarantee we capture a valid gesture
   ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
-    document.addEventListener(evt, initAndUnlockAudio, { capture: true, passive: true });
+    document.addEventListener(evt, initAudio, { capture: true, passive: true });
   });
 }
 
 const playPop = () => {
   try {
-    if (!audioCtx || !unlocked) return;
-    
+    if (!audioCtx || !audioUnlocked) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-    
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-    
-    // Increased volume to 0.5 (was 0.05) so it's actually audible
-    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    
+    osc.frequency.setValueAtTime(820, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
     osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.1);
+    osc.stop(audioCtx.currentTime + 0.08);
   } catch (e) {}
 };
 
@@ -88,583 +86,1122 @@ const playPop = () => {
 const profileData = {
   name: 'Lukmanul Hakim',
   handle: '@null.cloud',
-  bio: 'Founder & Developer LokerBray',
-  miniResume: 'Information Systems Student at Universitas Terbuka | IT Multimedia at PT Ihara',
-  avatarUrl:
-    'https://res.cloudinary.com/dkjfid0sq/image/upload/w_200,h_200,c_fill,r_max,f_png/v1785336228/719770759_17899290135454188_1095631538196561206_n_o4nkib.jpg',
+  titleTag: 'DEVELOPER • FOUNDER • TECH ENTHUSIAST',
+  role: 'Founder & Lead Engineer LokerBray',
+  miniResume: 'Mahasiswa Sistem Informasi Universitas Terbuka • IT Multimedia PT Ihara Manufacturing Indonesia • Passionate in Fullstack Web, WhatsApp Automation, AI Workflows & Clean Architecture.',
+  avatarUrl: 'https://res.cloudinary.com/dkjfid0sq/image/upload/w_300,h_300,c_fill,r_max,f_png/v1785336228/719770759_17899290135454188_1095631538196561206_n_o4nkib.jpg',
   phone: '+6285718532060',
+  cleanPhone: '6285718532060',
+  location: 'Karawang, Jawa Barat, Indonesia',
+  statusBadge: 'ONLINE & READY TO SHIP',
 };
 
 const socials = [
-  { id: 1, title: 'WhatsApp', url: `https://wa.me/${profileData.phone}`, icon: <MessageCircle size={22} /> },
-  { id: 2, title: 'Instagram', url: 'https://www.instagram.com/null.cloud', icon: <Instagram size={22} /> },
-  { id: 3, title: 'TikTok', url: 'https://www.tiktok.com/@nullsanz', icon: <Music size={22} /> },
-  { id: 4, title: 'LinkedIn', url: 'https://www.linkedin.com/in/lukmanul-hakim-586658309/', icon: <Linkedin size={22} /> },
-  { id: 5, title: 'GitHub', url: 'https://github.com/nullsanz', icon: <Github size={22} /> },
+  { id: 'wa', title: 'WhatsApp', handle: 'Direct Chat', url: `https://wa.me/${profileData.cleanPhone}`, icon: <MessageCircle size={20} />, color: '#00ff88' },
+  { id: 'ig', title: 'Instagram', handle: '@null.cloud', url: 'https://www.instagram.com/null.cloud', icon: <Instagram size={20} />, color: '#c084fc' },
+  { id: 'tt', title: 'TikTok', handle: '@nullsanz', url: 'https://www.tiktok.com/@nullsanz', icon: <Music size={20} />, color: '#fcba28' },
+  { id: 'li', title: 'LinkedIn', handle: 'Lukmanul Hakim', url: 'https://www.linkedin.com/in/lukmanul-hakim-586658309/', icon: <Linkedin size={20} />, color: '#14b6e5' },
+  { id: 'gh', title: 'GitHub', handle: 'nullsanz', url: 'https://github.com/nullsanz', icon: <Github size={20} />, color: '#f9f4da' },
 ];
 
-const links = [
+const stats = [
+  { label: 'KOMUNITAS AKTIF', val: '1,250+', sub: 'Member Loker', color: '#00ff88' },
+  { label: 'TEMPLATE RESMI', val: '18+', sub: 'Surat & CV ATS', color: '#fcba28' },
+  { label: 'REPOSITORI AKTIF', val: '24+', sub: 'GitHub Projects', color: '#14b6e5' },
+  { label: 'SERVICE UPTIME', val: '99.9%', sub: 'VPS PM2 Cloud', color: '#c084fc' },
+];
+
+const linkCategories = [
   {
-    category: 'Portofolio & Projects',
-    color: 'blue',
+    id: 'portfolio',
+    category: 'Portofolio & Flagship Apps',
+    badge: 'ECOSYSTEM',
+    accentColor: '#14b6e5',
+    description: 'Aplikasi web, platform pencari kerja, dan dashboard otomatisasi yang aktif melayani ribuan pengguna.',
     items: [
       {
-        id: 1,
+        id: 'web-1',
         title: 'Web Portofolio Utama',
-        subtitle: 'nullsanz.anull.cloud - Showcase lengkap karya & project',
+        subtitle: 'nullsanz.anull.cloud — Showcase interaktif portofolio, arsitektur sistem, dan koleksi karya rekayasa software.',
         url: 'https://nullsanz.anull.cloud/',
         icon: <Globe size={24} />,
+        accent: '#14b6e5',
+        badge: 'FLAGSHIP ⚡',
         isHero: true,
-        bgImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600&auto=format&fit=crop',
+        previewImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop',
       },
-      { id: 2, title: 'Web Portofolio 2', subtitle: 'lukman.anull.cloud', url: 'https://lukman.anull.cloud/', icon: <Briefcase size={20} /> },
-      { id: 4, title: 'Dashboard Member LokerBray', subtitle: 'Member Area', url: 'https://lokerbrayy.anull.cloud/dashboard-member', icon: <Layers size={20} />, isHot: true },
-      { id: 5, title: 'CV Builder Otomatis', subtitle: 'Buat CV secara gratis', url: 'https://lokerbrayy.anull.cloud/cv-builder', icon: <FileText size={20} />, isHot: true },
-      { id: 55, title: 'Surat Lamaran Kerja Builder', subtitle: '18 Template Resmi & AI Penulis', url: 'https://lokerbrayy.anull.cloud/lamaran-builder', icon: <FileText size={20} />, isHot: true },
-      { id: 56, title: 'Kirim Email Lamaran (Gmail API)', subtitle: 'Kirim lamaran via Gmail pribadi ke HRD', url: 'https://lokerbrayy.anull.cloud/email', icon: <Mail size={20} />, isHot: true },
-      { id: 6, title: 'Doc Merger & Compressor', subtitle: 'Gabungkan PDF Anda', url: 'https://lokerbrayy.anull.cloud/doc-merger', icon: <Briefcase size={20} />, isHot: true },
-      { id: 7, title: 'Test Psikotes Online', subtitle: 'testbrayy.anull.cloud', url: 'https://testbrayy.anull.cloud/', icon: <BrainCircuit size={20} />, isHot: true },
+      {
+        id: 'dash-loker',
+        title: 'Dashboard Member LokerBray',
+        subtitle: 'Member area terpusat untuk akses loker terverifikasi, tracking lamaran kerja, dan status verifikasi.',
+        url: 'https://lokerbrayy.anull.cloud/dashboard-member',
+        icon: <Layers size={22} />,
+        accent: '#00ff88',
+        badge: 'POPULER 🔥',
+      },
+      {
+        id: 'cv-builder',
+        title: 'CV Builder Otomatis (ATS)',
+        subtitle: 'Pembuat CV profesional gratis berstandar ATS (Applicant Tracking System) ramah HRD korporat.',
+        url: 'https://lokerbrayy.anull.cloud/cv-builder',
+        icon: <FileText size={22} />,
+        accent: '#fcba28',
+        badge: 'GRATIS ✨',
+      },
+      {
+        id: 'lamaran-builder',
+        title: 'Surat Lamaran Builder & AI',
+        subtitle: '18 template surat lamaran resmi + asisten AI yang merangkai kata motivasi kerja secara presisi.',
+        url: 'https://lokerbrayy.anull.cloud/lamaran-builder',
+        icon: <Sparkles size={22} />,
+        accent: '#c084fc',
+        badge: 'AI POWERED 🤖',
+      },
+      {
+        id: 'gmail-hrd',
+        title: 'Kirim Email Lamaran (Gmail API)',
+        subtitle: 'Kirim lamaran kerja dan berkas PDF resmi langsung dari akun Gmail pribadi kamu ke alamat HRD.',
+        url: 'https://lokerbrayy.anull.cloud/email',
+        icon: <Mail size={22} />,
+        accent: '#ff3344',
+        badge: 'DIRECT HRD 📬',
+      },
+      {
+        id: 'doc-merger',
+        title: 'Doc Merger & PDF Compressor',
+        subtitle: 'Gabungkan seluruh berkas lampiran (KTP, Ijazah, SKCK, Sertifikat) menjadi satu file PDF rapi dan ringan.',
+        url: 'https://lokerbrayy.anull.cloud/doc-merger',
+        icon: <Briefcase size={22} />,
+        accent: '#14b6e5',
+      },
+      {
+        id: 'psikotes',
+        title: 'Test Psikotes Spasial Online',
+        subtitle: 'Platform simulasi psikotes visual, deret gambar, matematika logika, dan latihan tes kerja pabrik.',
+        url: 'https://testbrayy.anull.cloud/',
+        icon: <BrainCircuit size={22} />,
+        accent: '#00ff88',
+        badge: 'INTERAKTIF 🎯',
+      },
+      {
+        id: 'web-2',
+        title: 'Web Portofolio 2 (Alternative)',
+        subtitle: 'lukman.anull.cloud — Portofolio ringkas dan dokumentasi profil karir profesional.',
+        url: 'https://lukman.anull.cloud/',
+        icon: <Code2 size={22} />,
+        accent: '#fcba28',
+      },
     ],
   },
   {
-    category: 'Community (Loker Bray)',
-    color: 'green',
-    note: '📍 Harap join 1 grup saja. Proses ACC maksimal 1x24 jam.',
+    id: 'community',
+    category: 'Komunitas & Saluran Loker Bray',
+    badge: 'NETWORK',
+    accentColor: '#00ff88',
+    description: 'Wadah silaturahmi, sharing info loker PT Karawang-Bekasi, tips interview, dan bantuan pencari kerja.',
+    alertNote: '⚠️ ATURAN GRUP: Mohon bergabung di SATU grup saja agar kuota member merata. Verifikasi bot otomatis maksimal 1x24 jam.',
     items: [
-      { id: 8, title: 'Grup Loker Bray 1', url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1', icon: <Users size={20} /> },
-      { id: 9, title: 'Grup Loker Bray 2', url: 'https://chat.whatsapp.com/FrMMZ3MRF0AFZDPoZSnEH0', icon: <Users size={20} /> },
-      { id: 10, title: 'Grup Loker Bray 3', url: 'https://chat.whatsapp.com/CZoXRjchOKwFRCoLPelTsK', icon: <Users size={20} /> },
-      { id: 101, title: 'Saluran Info Resmi', url: 'https://whatsapp.com/channel/0029Vb8paaO6buMC6R2RoL2T', icon: <Megaphone size={20} /> },
-      { id: 102, title: 'TikTok Loker Brayy', subtitle: '@lokerbrayy.anull.cloud - Info lowongan, tips interview & psikotes', url: 'https://www.tiktok.com/@lokerbrayy.anull.cloud', icon: <Music size={20} />, isHot: true, color: 'pink' },
+      {
+        id: 'gc-1',
+        title: 'Grup WhatsApp Loker Bray 1',
+        subtitle: 'Grup diskusi informasi lowongan kerja manufaktur & tips lolos tes recruitment Karawang.',
+        url: 'https://chat.whatsapp.com/Kf7eyeg3kcJFTt69HCPhh1',
+        icon: <Users size={22} />,
+        accent: '#00ff88',
+        badge: 'KOMUNITAS WA',
+      },
+      {
+        id: 'gc-2',
+        title: 'Grup WhatsApp Loker Bray 2',
+        subtitle: 'Ruang interaksi pencari kerja, jadwal tes offline, dan info validasi loker anti-calo.',
+        url: 'https://chat.whatsapp.com/FrMMZ3MRF0AFZDPoZSnEH0',
+        icon: <Users size={22} />,
+        accent: '#00ff88',
+        badge: 'KOMUNITAS WA',
+      },
+      {
+        id: 'gc-3',
+        title: 'Grup WhatsApp Loker Bray 3',
+        subtitle: 'Grup anggota baru, diskusi persiapan wawancara user, dan update link pendaftaran PT.',
+        url: 'https://chat.whatsapp.com/CZoXRjchOKwFRCoLPelTsK',
+        icon: <Users size={22} />,
+        accent: '#00ff88',
+        badge: 'KOMUNITAS WA',
+      },
+      {
+        id: 'saluran-wa',
+        title: 'Saluran Info Resmi WhatsApp',
+        subtitle: 'Pusat broadcast satu arah info loker A1, format lamaran, dan pengumuman mendesak.',
+        url: 'https://whatsapp.com/channel/0029Vb8paaO6buMC6R2RoL2T',
+        icon: <Megaphone size={22} />,
+        accent: '#14b6e5',
+        badge: 'BROADCAST 📢',
+      },
+      {
+        id: 'tiktok-loker',
+        title: 'TikTok Edukasi Loker Brayy',
+        subtitle: '@lokerbrayy.anull.cloud — Video panduan interview, bedah psikotes gambar, dan info kerja.',
+        url: 'https://www.tiktok.com/@lokerbrayy.anull.cloud',
+        icon: <Music size={22} />,
+        accent: '#fcba28',
+        badge: 'KONTEN VIDEO 🎬',
+      },
     ],
   },
   {
-    category: 'Project Anul Copy Centre',
-    color: 'orange',
+    id: 'anulcopy',
+    category: 'Project Anul Copy Centre & Percetakan',
+    badge: 'SPECIALITY',
+    accentColor: '#fcba28',
+    description: 'Jaringan 2 toko fisik fotocopy & percetakan (Jatisari & Cikalongsari) serta rangkaian tools dokumen digital.',
     items: [
-      { id: 10, title: 'Tools Print Grup', url: '#', icon: <Printer size={20} />, locked: true, badge: 'Private' },
-      { id: 11, title: 'Tools Auto Cropping Image', url: '#', icon: <Crop size={20} />, locked: true, badge: 'Private' },
-      { id: 12, title: 'Tools Mini Photoshop', url: '#', icon: <ImageIcon size={20} />, locked: true, badge: 'Segera Launching' },
+      {
+        id: 'web-fotocopy',
+        title: 'Web Showcase Anul Copy Centre',
+        subtitle: 'fotocopy.anull.cloud — Info resmi 2 cabang toko, katalog jasa, perlengkapan ATK, dan kemitraan SIPLah Kemendikbud.',
+        url: 'https://fotocopy.anull.cloud/',
+        icon: <Printer size={22} />,
+        accent: '#00ff88',
+        badge: 'TOKO FISIK 🏪',
+      },
+      {
+        id: 'joki-npwp',
+        title: 'Jasa Pembuatan NPWP Coretax DJP',
+        subtitle: 'Layanan terima beres pendaftaran NPWP resmi Coretax untuk pegawai/melamar kerja + gratis kartu fisik.',
+        url: 'https://wa.me/6285718532060?text=Halo%20bray%20mau%20tanya%20jasa%20joki%20NPWP%20Coretax',
+        icon: <FileText size={22} />,
+        accent: '#fcba28',
+        badge: 'TERIMA BERES 📇',
+      },
+      {
+        id: 'auto-ktp',
+        title: 'Tools Auto-Cropping KTP 1:1 Scale',
+        subtitle: 'Alat bantu otomatis potong dan presisikan skala KTP 1:1 untuk cetak kartu identitas fisik.',
+        url: '#',
+        icon: <Crop size={22} />,
+        accent: '#c084fc',
+        badge: 'INTERNAL STUDIO',
+        isLocked: true,
+      },
+      {
+        id: 'cetak-foto',
+        title: 'Studio Cetak Pas Foto Otomatis',
+        subtitle: 'Generator pas foto cepat berbagai ukuran (2x3, 3x4, 4x6) berlatar merah & biru siap cetak.',
+        url: '#',
+        icon: <ImageIcon size={22} />,
+        accent: '#14b6e5',
+        badge: 'INTERNAL STUDIO',
+        isLocked: true,
+      },
+      {
+        id: 'print-grup',
+        title: 'Layanan Print Online Bebas Antre',
+        subtitle: 'Kirim file dokumen via WhatsApp, langsung dicetak dan tinggal diambil di kasir toko tanpa antre.',
+        url: 'https://wa.me/6289666708050?text=Halo%20Anul%20Copy%20Centre,%20saya%20mau%20kirim%20file%20untuk%20dicetak',
+        icon: <Printer size={22} />,
+        accent: '#ff3344',
+        badge: 'WA DIRECT ⚡',
+      },
     ],
   },
 ];
 
-// --- Framer Motion Variants ---
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-};
+// --- BrutStack 3-Layer Retro Stack Card Component ---
+const BrutRetroCard = ({ item }) => {
+  const isLocked = item.isLocked;
+  const accent = item.accent || '#14b6e5';
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
-};
-
-// --- Custom Cursor Component ---
-const CustomCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-
-    const updateMousePosition = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
-    const handleMouseOver = (e) => setIsHovering(!!e.target.closest('a, button'));
-
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mouseover', handleMouseOver);
-
-    return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
-  if (window.matchMedia('(pointer: coarse)').matches) return null;
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100] mix-blend-difference border border-white hidden md:block"
-      animate={{
-        x: mousePosition.x - 16,
-        y: mousePosition.y - 16,
-        scale: isHovering ? 1.5 : 1,
-        backgroundColor: isHovering ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0)',
-      }}
-      transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.5 }}
-    />
-  );
-};
-
-// --- Components ---
-
-const Background = ({ isDark }) => (
-  <div className={`fixed inset-0 z-0 overflow-hidden transition-colors duration-700 ${isDark ? 'bg-[#030014]' : 'bg-slate-50'}`}>
-    {/* Optimized for low-end devices: Using radial-gradient instead of expensive filter: blur() */}
-    <motion.div
-      animate={{ x: [0, 30, -10, 0], y: [0, -20, 20, 0] }}
-      transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-      style={{
-        background: isDark 
-          ? 'radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 60%)' 
-          : 'radial-gradient(circle, rgba(192, 132, 252, 0.3) 0%, transparent 60%)'
-      }}
-      className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] min-w-[500px] min-h-[500px] rounded-full pointer-events-none will-change-transform"
-    />
-    <motion.div
-      animate={{ x: [0, -30, 10, 0], y: [0, 20, -20, 0] }}
-      transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-      style={{
-        background: isDark 
-          ? 'radial-gradient(circle, rgba(8, 145, 178, 0.12) 0%, transparent 60%)' 
-          : 'radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, transparent 60%)'
-      }}
-      className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] min-w-[500px] min-h-[500px] rounded-full pointer-events-none will-change-transform"
-    />
-    {/* Removed mix-blend-overlay which is notoriously slow on mobile GPUs */}
-    <div className={`absolute inset-0 bg-noise pointer-events-none ${isDark ? 'opacity-[0.03]' : 'opacity-[0.02]'}`} />
-  </div>
-);
-
-const ThemeToggle = ({ isDark, toggleTheme }) => (
-  <motion.button
-    whileHover={{ scale: 1.1, rotate: 15 }}
-    whileTap={{ scale: 0.9 }}
-    onMouseEnter={playPop}
-    onClick={() => { playPop(); toggleTheme(); }}
-    className="fixed top-6 right-6 p-3 rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-cyan-400 shadow-lg hover:shadow-xl transition-all duration-300 z-50"
-    title="Toggle Theme"
-  >
-    <AnimatePresence mode="wait" initial={false}>
-      {isDark ? (
-        <motion.div key="moon" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }}>
-          <Moon size={20} />
-        </motion.div>
-      ) : (
-        <motion.div key="sun" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.2 }}>
-          <Sun size={20} className="text-amber-500" />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </motion.button>
-);
-
-const QRModal = ({ isOpen, onClose }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      >
-        <motion.div
-          initial={{ scale: 0.9, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.9, y: 20 }}
-          onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl flex flex-col items-center relative border border-slate-200 dark:border-slate-800"
-        >
-          <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-            <X size={20} />
-          </button>
-          <h3 className="text-lg font-bold mb-6 text-slate-800 dark:text-white">Scan untuk membagikan</h3>
-          <div className="bg-white p-4 rounded-xl shadow-inner border border-slate-100">
-            <QRCodeCanvas value={window.location.href} size={200} bgColor={"#ffffff"} fgColor={"#030014"} level={"H"} />
-          </div>
-          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">{profileData.handle}</p>
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
-
-// The dynamic compact header that appears when scrolling down
-const CompactStickyHeader = ({ scrollY, isDark, onShare, onQr }) => {
-  const [isCopied, setIsCopied] = useState(false);
-  
-  // Fade in the compact header when scrolled past 150px
-  const headerOpacity = useTransform(scrollY, [150, 200], [0, 1]);
-  const headerY = useTransform(scrollY, [150, 200], [-20, 0]);
-  
-  // Conditionally disable pointer events to avoid blocking clicks when hidden
-  const [pointerEvents, setPointerEvents] = useState('none');
-  
-  useEffect(() => {
-    return headerOpacity.onChange((v) => {
-      setPointerEvents(v > 0.5 ? 'auto' : 'none');
-    });
-  }, [headerOpacity]);
-
-  const handleCopy = () => {
-    onShare();
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  return (
-    <motion.div 
-      style={{ opacity: headerOpacity, y: headerY, pointerEvents }}
-      className={`fixed top-0 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between backdrop-blur-lg border-b shadow-sm transition-colors duration-300 ${
-        isDark ? 'bg-[#030014]/80 border-slate-800' : 'bg-white/80 border-slate-200'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <img src={profileData.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
-        <span className="font-bold text-sm sm:text-base text-slate-800 dark:text-white truncate max-w-[150px] sm:max-w-[200px]">
-          {profileData.name}
-        </span>
-      </div>
-      <div className="flex items-center gap-2 pr-14">
-        <button onClick={onQr} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-500 transition-colors">
-          <QrCode size={16} />
-        </button>
-        <button onClick={handleCopy} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-500 transition-colors">
-          {isCopied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
-        </button>
-      </div>
-    </motion.div>
-  );
-};
-
-// The main static header with all info
-const ProfileHeader = ({ onShare, onQr, onSaveContact, opacity, scale, y }) => {
-  return (
-    <motion.div style={{ opacity, scale, y }} className="w-full flex flex-col items-center pt-16 pb-4 px-4 relative z-10">
-      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 20 }} className="relative group mb-6">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 rounded-full opacity-60 dark:opacity-70 blur-md"
-        />
-        <div className="relative p-1 bg-white dark:bg-[#030014] rounded-full transition-colors duration-500">
-          <motion.img
-            whileHover={{ scale: 1.05 }}
-            src={profileData.avatarUrl}
-            alt={profileData.name}
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-white dark:border-[#030014] object-cover shadow-2xl transition-colors duration-500"
-          />
-        </div>
-      </motion.div>
-
-      <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-wide drop-shadow-sm dark:drop-shadow-md text-center">
-        {profileData.name}
-      </motion.h1>
-
-      <motion.p variants={itemVariants} className="mt-1 text-sm md:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500 dark:from-purple-400 dark:to-cyan-400 tracking-wide text-center">
-        {profileData.bio}
-      </motion.p>
-      
-      <motion.p variants={itemVariants} className="mt-3 text-slate-500 dark:text-slate-400 text-xs sm:text-sm max-w-md leading-relaxed font-medium text-center">
-        {profileData.miniResume}
-      </motion.p>
-      
-      {/* Social Icons */}
-      <motion.div variants={itemVariants} className="flex items-center justify-center gap-x-4 sm:gap-x-6 mt-6">
-        {socials.map((social) => (
-          <motion.a
-            onMouseEnter={playPop}
-            whileHover={{ y: -5, scale: 1.1, borderColor: '#a855f7', color: '#a855f7' }}
-            whileTap={{ scale: 0.95 }}
-            key={social.id}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={social.title}
-            className="flex items-center justify-center w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md bg-white/60 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 shadow-md transition-colors duration-300"
+  const cardContent = (
+    <div className="relative flex h-full flex-col justify-between p-5 sm:p-6">
+      {/* Top row: Accent Icon & Badges */}
+      <div>
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div
+            className="flex items-center justify-center w-12 h-12 border-2 border-black text-black shrink-0 shadow-[2px_2px_0_0_#000]"
+            style={{ backgroundColor: accent }}
           >
-            {social.icon}
-          </motion.a>
-        ))}
-      </motion.div>
+            {item.icon}
+          </div>
 
-      {/* Action Buttons Row */}
-      <motion.div variants={itemVariants} className="flex flex-wrap justify-center items-center gap-3 mt-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onQr}
-          className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:text-purple-500 transition-colors"
-          title="QR Code"
-        >
-          <QrCode size={18} />
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onShare}
-          className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:text-purple-500 transition-colors"
-          title="Share"
-        >
-          <Share2 size={18} />
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onSaveContact}
-          className="flex items-center gap-2 px-6 h-12 rounded-2xl bg-slate-800 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm shadow-lg hover:shadow-xl hover:bg-slate-700 dark:hover:bg-slate-100 transition-all"
-        >
-          <Download size={18} />
-          Simpan Kontak
-        </motion.button>
-      </motion.div>
-    </motion.div>
-  );
-};
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            {item.badge && (
+              <span className="inline-block px-2.5 py-1 text-[11px] font-mono font-bold uppercase tracking-wider border-2 border-black bg-[#f9f4da] text-black shadow-[2px_2px_0_0_#000]">
+                {item.badge}
+              </span>
+            )}
+            <div className="p-1 border border-black bg-[#141414] text-[#f9f4da] group-hover:text-black group-hover:bg-[#f9f4da] transition-colors">
+              {isLocked ? <AlertTriangle size={15} /> : <ArrowUpRight size={16} />}
+            </div>
+          </div>
+        </div>
 
-const LinkCard = ({ item }) => {
-  const isLocked = item.locked;
-  
-  const colorMap = {
-    blue: 'text-blue-500 dark:text-cyan-400 group-hover:text-blue-600 dark:group-hover:text-cyan-300',
-    green: 'text-emerald-500 dark:text-emerald-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-300',
-    orange: 'text-orange-500 dark:text-amber-400 group-hover:text-orange-600 dark:group-hover:text-amber-300',
-    pink: 'text-pink-500 dark:text-pink-400 group-hover:text-pink-600 dark:group-hover:text-pink-300',
-  };
-  const iconColor = colorMap[item.color || item.categoryColor] || colorMap.blue;
-
-  const CardContent = (
-    <>
-      <div className={`flex items-center justify-center ${item.isHero ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-12 h-12'} rounded-xl shrink-0 bg-slate-100/80 dark:bg-slate-800/80 ${iconColor} transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6 backdrop-blur-md shadow-sm`}>
-        {item.icon}
-      </div>
-
-      <div className="ml-4 flex-1 text-left relative z-10">
-        <h3 className={`${item.isHero ? 'text-lg sm:text-xl' : 'text-[15px] md:text-base'} font-bold transition-colors duration-300 ease-out ${isLocked ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-white'}`}>
+        {/* Title */}
+        <h3 className="font-head text-lg sm:text-xl font-bold uppercase tracking-wide text-white group-hover:text-[#fcba28] transition-colors mb-2">
           {item.title}
         </h3>
-        {item.subtitle && (
-          <p className={`${item.isHero ? 'text-sm' : 'text-xs'} text-slate-500 dark:text-slate-400 transition-colors duration-300 ease-out mt-1 group-hover:text-slate-700 dark:group-hover:text-cyan-200/80 line-clamp-2`}>
-            {item.subtitle}
-          </p>
-        )}
-        <div className="flex gap-2 items-center flex-wrap mt-2">
-          {item.badge && (
-            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
-              {item.badge}
-            </span>
-          )}
-          {item.isHot && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-gradient-to-r from-orange-500 to-red-500 text-white animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.5)]">
-              🔥 Populer
-            </span>
-          )}
-        </div>
+
+        {/* Subtitle / Description */}
+        <p className="font-sans text-xs sm:text-sm text-[#f9f4da]/80 leading-relaxed">
+          {item.subtitle}
+        </p>
       </div>
 
-      <div className={`transition-all duration-300 ease-out shrink-0 ml-3 z-10 ${isLocked ? 'text-slate-400 dark:text-slate-600' : 'text-slate-400 dark:text-slate-500 group-hover:text-purple-500 dark:group-hover:text-cyan-400 group-hover:translate-x-1'}`}>
-        {isLocked ? <Lock size={18} /> : <ExternalLink size={18} />}
+      {/* Bottom Action Footer */}
+      <div className="mt-5 pt-3 border-t-2 border-black/60 flex items-center justify-between text-xs font-mono font-bold uppercase">
+        <span className="text-[#a3a3a3] group-hover:text-[#f9f4da] transition-colors flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
+          {isLocked ? 'MODUL INTERNAL' : 'BUKA APLIKASI'}
+        </span>
+        <span className="text-[#fcba28] group-hover:translate-x-1 transition-transform flex items-center gap-1">
+          {isLocked ? 'TERKUNCI' : 'KUNJUNGI'} ➔
+        </span>
       </div>
-    </>
+    </div>
   );
 
-  const baseClasses = `
-    group relative flex items-center p-4 h-full
-    bg-white/70 dark:bg-slate-900/40 backdrop-blur-md 
-    border border-slate-200/60 dark:border-white/10 rounded-2xl 
-    overflow-hidden shadow-sm dark:shadow-lg
-    ${item.isHero ? 'md:col-span-2 lg:col-span-2 min-h-[140px]' : ''}
-  `;
-
+  // Locked Card
   if (isLocked) {
     return (
-      <motion.div variants={itemVariants} className={`${baseClasses} opacity-60 dark:opacity-70 cursor-not-allowed`}>
-        {CardContent}
-      </motion.div>
+      <div className="relative group h-full w-full opacity-70 cursor-not-allowed">
+        <div
+          className="pointer-events-none absolute inset-0 z-0 border-2 border-black bs-layer-bottom"
+          style={{ backgroundColor: accent }}
+        />
+        <div className="pointer-events-none absolute inset-0 z-10 border-2 border-black bg-[#f9f4da] bs-layer-middle" />
+        <div className="relative z-20 h-full border-2 border-black bg-[#141414]">
+          {cardContent}
+        </div>
+      </div>
     );
   }
 
+  // Active Clickable Card
   return (
-    <motion.a
-      variants={itemVariants}
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
-      onMouseEnter={playPop}
+    <a
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`${baseClasses} no-underline hover:border-purple-300 dark:hover:border-purple-500/50 hover:bg-white/90 dark:hover:bg-slate-800/60 hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300`}
+      onMouseEnter={playPop}
+      className={`group relative block h-full w-full no-underline transition-transform ${item.isHero ? 'md:col-span-2' : ''}`}
     >
-      {item.isHero && item.bgImage && (
-        <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20 transition-opacity duration-500 group-hover:opacity-20 dark:group-hover:opacity-40">
-          <img src={item.bgImage} alt="bg" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-white dark:from-[#030014] via-white/80 dark:via-[#030014]/80 to-transparent" />
+      {/* Bottom Color Layer */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 border-2 border-black bs-layer-bottom"
+        style={{ backgroundColor: accent }}
+      />
+      {/* Middle Vintage Cream Layer */}
+      <div className="pointer-events-none absolute inset-0 z-10 border-2 border-black bg-[#f9f4da] bs-layer-middle" />
+      {/* Top Content Layer */}
+      <div className="relative z-20 h-full border-2 border-black bg-[#141414] overflow-hidden group-hover:border-[#fcba28] transition-colors">
+        {item.isHero && item.previewImage && (
+          <div className="absolute inset-0 z-0 opacity-15 group-hover:opacity-25 transition-opacity">
+            <img src={item.previewImage} alt="preview" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/80 to-transparent" />
+          </div>
+        )}
+        <div className="relative z-10 h-full flex flex-col justify-between">
+          {cardContent}
         </div>
-      )}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-100 dark:via-cyan-500/0 to-purple-500/0 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-10 transition-opacity duration-500 pointer-events-none z-0" />
-      {CardContent}
-    </motion.a>
+      </div>
+    </a>
   );
 };
 
+// --- QR Code Modal Component ---
+const BrutQRModal = ({ isOpen, onClose, url, profileData }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-sm border-2 border-black bg-[#141414] text-[#f9f4da] p-6 shadow-[8px_8px_0_0_#000]"
+      >
+        {/* Header Bar */}
+        <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-5">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#ff3333] border border-black inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#fcba28] border border-black inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#00ff88] border border-black inline-block" />
+            <span className="font-mono text-xs font-bold uppercase tracking-wider ml-2 text-white">
+              SHARE_PROFILE.QR
+            </span>
+          </div>
+          <button
+            onClick={() => { playPop(); onClose(); }}
+            className="p-1 border-2 border-black bg-[#ff3333] text-black hover:bg-white transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* QR Canvas Box */}
+        <div className="flex flex-col items-center">
+          <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0_0_#000] mb-4">
+            <QRCodeCanvas
+              value={url || window.location.href}
+              size={200}
+              bgColor="#ffffff"
+              fgColor="#1a1a1a"
+              level="H"
+            />
+          </div>
+          <p className="font-head text-base font-bold text-white uppercase text-center">
+            {profileData.name}
+          </p>
+          <p className="font-mono text-xs text-[#00ff88] tracking-widest mt-1">
+            {profileData.handle}
+          </p>
+          <p className="font-sans text-xs text-[#a3a3a3] text-center mt-3">
+            Scan barcode ini dengan kamera ponsel untuk langsung membuka profil & semua tautan proyek.
+          </p>
+        </div>
+
+        {/* Close Button */}
+        <button
+          onClick={() => { playPop(); onClose(); }}
+          className="mt-6 w-full py-2.5 bg-[#f9f4da] text-black font-head font-bold uppercase text-xs tracking-wider border-2 border-black shadow-[3px_3px_0_0_#000] hover:bg-[#fcba28] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+        >
+          TUTUP MODAL
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Main App Component ---
 export default function App() {
-  const [isDark, setIsDark] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [qrOpen, setQrOpen] = useState(false);
-  const { scrollY } = useScroll();
+  const [activeTab, setActiveTab] = useState('ALL');
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [cliTab, setCliTab] = useState('SPECS');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Parallax animation for ProfileHeader
-  const profileOpacity = useTransform(scrollY, [0, 200], [1, 0]);
-  const profileScale = useTransform(scrollY, [0, 200], [1, 0.9]);
-  const profileY = useTransform(scrollY, [0, 200], [0, 50]);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') setIsDark(true);
-    else setIsDark(false);
-  }, []);
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => setIsDark(!isDark);
-
+  // Handle Share Link
   const handleShare = () => {
     playPop();
-    navigator.clipboard.writeText(window.location.href);
-    toast.success('Link berhasil disalin ke clipboard! 🚀', { position: 'top-center' });
+    const shareUrl = window.location.href;
+    navigator.clipboard.writeText(shareUrl);
+    setCopiedLink(true);
+    toast.success('URL bio.anull.cloud berhasil disalin ke clipboard! 📋', {
+      position: 'top-center',
+      className: 'font-mono text-xs font-bold border-2 border-black shadow-[4px_4px_0_0_#000] bg-[#f9f4da] text-black',
+    });
+    setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  const handleQr = () => {
-    playPop();
-    setQrOpen(true);
-  };
-
-  const handleSaveContact = () => {
+  // Download VCF Contact Card
+  const handleDownloadVCard = () => {
     playPop();
     const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${profileData.name}
-TITLE:Founder & Developer LokerBray
-TEL;TYPE=CELL:${profileData.phone}
+ORG:LokerBray & PT Ihara Manufacturing Indonesia
+TITLE:${profileData.role}
+TEL;TYPE=CELL,VOICE:${profileData.phone}
+EMAIL:nullsanz@null.cloud
 URL:https://nullsanz.anull.cloud/
+NOTE:${profileData.miniResume}
+ADR;TYPE=HOME:;;Karawang;Jawa Barat;;Indonesia
 END:VCARD`;
-    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${profileData.name.replace(' ', '_')}.vcf`;
-    a.click();
-    toast.success('Kontak vCard berhasil diunduh! 📇', { position: 'top-center' });
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Kontak_${profileData.name.replace(/\s+/g, '_')}.vcf`;
+    link.click();
+    toast.success('File vCard Kontak berhasil diunduh! 📇', {
+      position: 'top-center',
+      className: 'font-mono text-xs font-bold border-2 border-black shadow-[4px_4px_0_0_#000] bg-[#00ff88] text-black',
+    });
   };
 
-  const filteredLinks = useMemo(() => {
-    if (!searchQuery.trim()) return links;
-    return links.map(category => {
-      const filteredItems = category.items.filter(item => 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (item.subtitle && item.subtitle.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-      return { ...category, items: filteredItems };
-    }).filter(category => category.items.length > 0);
-  }, [searchQuery]);
+  // Filter links based on search & tab
+  const filteredCategories = useMemo(() => {
+    return linkCategories
+      .map((cat) => {
+        // Tab filtering
+        if (activeTab === 'PORTFOLIO' && cat.id !== 'portfolio') return null;
+        if (activeTab === 'COMMUNITY' && cat.id !== 'community') return null;
+        if (activeTab === 'ANULCOPY' && cat.id !== 'anulcopy') return null;
+
+        // Search query filtering
+        if (!searchQuery.trim()) return cat;
+
+        const q = searchQuery.toLowerCase();
+        const matchingItems = cat.items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(q) ||
+            item.subtitle.toLowerCase().includes(q) ||
+            (item.badge && item.badge.toLowerCase().includes(q))
+        );
+
+        if (matchingItems.length === 0) return null;
+        return { ...cat, items: matchingItems };
+      })
+      .filter(Boolean);
+  }, [searchQuery, activeTab]);
 
   return (
-    <div className={`min-h-screen font-sans selection:bg-purple-500/30 overflow-x-clip ${isDark ? 'dark text-slate-200' : 'text-slate-800'}`}>
-      <CustomCursor />
-      <Toaster toastOptions={{ className: 'dark:bg-slate-800 dark:text-white dark:border-slate-700' }} />
-      <Background isDark={isDark} />
-      <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
-      <QRModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />
+    <div className="min-h-screen bg-[#1a1a1a] text-[#f9f4da] bg-brut-grid flex flex-col justify-between selection:bg-[#00ff88] selection:text-black overflow-x-hidden">
+      <Toaster />
+      <BrutQRModal
+        isOpen={qrOpen}
+        onClose={() => setQrOpen(false)}
+        url="https://bio.anull.cloud/"
+        profileData={profileData}
+      />
 
-      {/* The dynamically appearing compact header on scroll */}
-      <CompactStickyHeader scrollY={scrollY} isDark={isDark} onShare={handleShare} onQr={handleQr} />
-
-      <main className="relative z-10 max-w-4xl mx-auto pb-12 px-4 sm:px-6">
-        
-        {/* The main static header with parallax */}
-        <ProfileHeader 
-          onShare={handleShare} 
-          onQr={handleQr} 
-          onSaveContact={handleSaveContact} 
-          opacity={profileOpacity} 
-          scale={profileScale} 
-          y={profileY} 
-        />
-
-        {/* Search Bar */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10 max-w-lg mx-auto mt-6"
-        >
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search size={18} className="text-slate-400 group-focus-within:text-purple-500 transition-colors" />
+      {/* =========================================================================
+          TOP NAVIGATION BAR (BrutStack Navbar)
+      ========================================================================== */}
+      <header className="sticky top-0 z-40 w-full border-b-2 border-black bg-[#1a1a1a]/95 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-stretch justify-between h-16">
+          {/* Brand Logo */}
+          <a
+            href="#"
+            onMouseEnter={playPop}
+            className="flex items-center gap-3 no-underline my-auto group"
+          >
+            <div className="flex items-center justify-center w-9 h-9 border-2 border-black bg-[#00ff88] text-black font-head font-extrabold text-sm shadow-[2px_2px_0_0_#000] group-hover:bg-[#fcba28] transition-colors">
+              LH
             </div>
-            <input
-              type="text"
-              placeholder="Cari project atau link..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 rounded-2xl text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all shadow-sm dark:shadow-lg dark:text-white placeholder:text-slate-400"
-            />
+            <div className="flex flex-col">
+              <span className="font-head font-bold text-sm sm:text-base text-white tracking-wider uppercase group-hover:text-[#00ff88] transition-colors">
+                NULL.CLOUD
+              </span>
+              <span className="font-mono text-[10px] text-[#00ff88] tracking-widest uppercase hidden xs:inline-block">
+                ● BIO LINK STACK
+              </span>
+            </div>
+          </a>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-stretch divide-x-2 divide-black border-x-2 border-black font-mono text-xs uppercase tracking-wider font-bold">
+            <a
+              href="#portfolio"
+              onMouseEnter={playPop}
+              className="flex items-center px-6 hover:text-[#fcba28] hover:bg-[#141414] transition-colors"
+            >
+              Portofolio
+            </a>
+            <a
+              href="#community"
+              onMouseEnter={playPop}
+              className="flex items-center px-6 hover:text-[#00ff88] hover:bg-[#141414] transition-colors"
+            >
+              Komunitas
+            </a>
+            <a
+              href="#anulcopy"
+              onMouseEnter={playPop}
+              className="flex items-center px-6 hover:text-[#14b6e5] hover:bg-[#141414] transition-colors"
+            >
+              Anul Copy
+            </a>
+            <a
+              href="#cli-specs"
+              onMouseEnter={playPop}
+              className="flex items-center px-6 hover:text-[#c084fc] hover:bg-[#141414] transition-colors"
+            >
+              Developer Specs
+            </a>
+          </nav>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => { playPop(); setQrOpen(true); }}
+              title="Tampilkan QR Code"
+              className="p-2 sm:px-3 sm:py-2 border-2 border-black bg-[#141414] text-[#f9f4da] hover:bg-[#f9f4da] hover:text-black font-mono text-xs font-bold uppercase shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-1.5"
+            >
+              <QrCode size={16} />
+              <span className="hidden sm:inline">QR CODE</span>
+            </button>
+
+            <button
+              onClick={handleShare}
+              title="Salin Link Bio"
+              className="p-2 sm:px-3 sm:py-2 border-2 border-black bg-[#141414] text-[#f9f4da] hover:bg-[#00ff88] hover:text-black font-mono text-xs font-bold uppercase shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-1.5"
+            >
+              {copiedLink ? <Check size={16} className="text-black" /> : <Share2 size={16} />}
+              <span className="hidden sm:inline">{copiedLink ? 'TERSALIN' : 'BAGIKAN'}</span>
+            </button>
+
+            <a
+              href={`https://wa.me/${profileData.cleanPhone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={playPop}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 border-2 border-black bg-[#14b6e5] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-[#00bfc2] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            >
+              <Send size={15} />
+              <span className="hidden xs:inline">CHAT WA</span>
+            </a>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => { playPop(); setMobileMenuOpen(!mobileMenuOpen); }}
+              className="lg:hidden p-2 border-2 border-black bg-[#fcba28] text-black shadow-[2px_2px_0_0_#000]"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-        </motion.div>
-
-        {/* Links Container */}
-        <div className="space-y-12">
-          <AnimatePresence mode="popLayout">
-            {filteredLinks.length > 0 ? filteredLinks.map((category, idx) => (
-              <motion.div 
-                key={category.category}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600/50 to-transparent" />
-                  <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-purple-600 dark:text-cyan-400/80">
-                    {category.category}
-                  </span>
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600/50 to-transparent" />
-                </div>
-
-                {category.note && (
-                  <div className="mb-6 max-w-lg mx-auto p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 flex items-start gap-3 backdrop-blur-sm shadow-sm">
-                    <AlertCircle size={20} className="text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-                    <p className="text-sm font-medium text-amber-800 dark:text-amber-200/80 leading-relaxed text-left">
-                      {category.note}
-                    </p>
-                  </div>
-                )}
-
-                <motion.div 
-                  variants={containerVariants} 
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-                >
-                  {category.items.map((item) => (
-                    <LinkCard key={item.id} item={{ ...item, categoryColor: category.color }} />
-                  ))}
-                </motion.div>
-              </motion.div>
-            )) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 text-slate-500 dark:text-slate-400">
-                <Search size={48} className="mx-auto mb-4 opacity-20" />
-                <p>Tidak ada link yang cocok dengan pencarian "{searchQuery}"</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
-        <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-24 text-center text-xs text-slate-400 dark:text-slate-500 pb-10">
-          <p className="font-medium tracking-wide">© {new Date().getFullYear()} Null Cloud. All rights reserved.</p>
-        </motion.footer>
+        {/* Mobile Dropdown Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="lg:hidden border-t-2 border-black bg-[#141414] px-4 py-4 space-y-2 font-mono text-xs uppercase font-bold"
+            >
+              <a
+                href="#portfolio"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#fcba28] hover:text-black"
+              >
+                ➔ Portofolio & Web Apps
+              </a>
+              <a
+                href="#community"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#00ff88] hover:text-black"
+              >
+                ➔ Komunitas Loker Bray
+              </a>
+              <a
+                href="#anulcopy"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#14b6e5] hover:text-black"
+              >
+                ➔ Anul Copy Centre
+              </a>
+              <a
+                href="#cli-specs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block p-2 border-2 border-black bg-[#1a1a1a] text-[#f9f4da] hover:bg-[#c084fc] hover:text-black"
+              >
+                ➔ Developer Specs & CLI
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* =========================================================================
+          HERO SECTION (BrutStack Hero Style)
+      ========================================================================== */}
+      <section className="relative w-full pt-10 pb-14 sm:pt-14 sm:pb-20 border-b-2 border-black">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Top Status & Role Pill */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider bg-[#14b6e5] text-black px-3.5 py-1.5 border-2 border-black shadow-[2px_2px_0_0_#000]">
+              {profileData.titleTag}
+            </span>
+            <span className="font-mono text-xs font-bold uppercase tracking-wider bg-[#141414] text-[#00ff88] px-3.5 py-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse" />
+              {profileData.statusBadge}
+            </span>
+          </div>
+
+          {/* Big Uppercase Brutalist Headline */}
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="font-head text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold uppercase tracking-tight text-white leading-none">
+              BUILD. CODE. <span className="text-[#00ff88]">SHIP.</span>
+              <br />
+              <span className="text-[#fcba28]">LUKMANUL HAKIM</span>
+            </h1>
+
+            <p className="font-sans mt-5 max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#f9f4da]/90 leading-relaxed font-medium">
+              {profileData.role} • {profileData.miniResume}
+            </p>
+          </div>
+
+          {/* Interactive Profile Card Window (3-Layer Retro Stack) */}
+          <div className="mt-10 max-w-2xl mx-auto">
+            <div className="group relative">
+              {/* Bottom Layer */}
+              <div className="pointer-events-none absolute inset-0 z-0 border-2 border-black bg-[#00ff88] bs-layer-bottom" />
+              {/* Middle Layer */}
+              <div className="pointer-events-none absolute inset-0 z-10 border-2 border-black bg-[#f9f4da] bs-layer-middle" />
+              {/* Top Layer */}
+              <div className="relative z-20 border-2 border-black bg-[#141414] p-5 sm:p-7 shadow-none">
+                
+                {/* Terminal Header Bar */}
+                <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-[#ff3333] border border-black inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#fcba28] border border-black inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#00ff88] border border-black inline-block" />
+                    <span className="font-mono text-xs font-bold text-white tracking-wider ml-2">
+                      lukman@null-cloud:~
+                    </span>
+                  </div>
+                  <span className="font-mono text-[11px] text-[#fcba28] font-bold uppercase tracking-wider hidden sm:inline-block">
+                    DEV_ENVIRONMENT: ACTIVE
+                  </span>
+                </div>
+
+                {/* Profile Flex Content */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                  {/* Avatar */}
+                  <div className="relative shrink-0">
+                    <img
+                      src={profileData.avatarUrl}
+                      alt={profileData.name}
+                      className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-black object-cover shadow-[4px_4px_0_0_#000]"
+                    />
+                    <div className="absolute -bottom-2 -right-2 px-2 py-0.5 bg-[#00ff88] text-black font-mono font-bold text-[10px] border-2 border-black shadow-[2px_2px_0_0_#000]">
+                      VERIFIED
+                    </div>
+                  </div>
+
+                  {/* Terminal Bio Lines */}
+                  <div className="flex-1 font-mono text-xs sm:text-[13px] space-y-1.5 text-left w-full">
+                    <p className="text-white">
+                      <span className="text-[#00ff88] font-bold">$ whoami:</span> {profileData.name} ({profileData.handle})
+                    </p>
+                    <p className="text-white">
+                      <span className="text-[#fcba28] font-bold">$ focus:</span> Fullstack Web, WhatsApp API, AI Integration
+                    </p>
+                    <p className="text-white">
+                      <span className="text-[#14b6e5] font-bold">$ org:</span> Founder LokerBray & IT Multimedia PT Ihara
+                    </p>
+                    <p className="text-[#a3a3a3]">
+                      <span className="text-[#c084fc] font-bold">$ location:</span> {profileData.location}
+                    </p>
+                    <p className="text-[#00ff88] font-bold pt-1 flex items-center gap-1">
+                      <Terminal size={14} /> ready for high-impact software engineering
+                      <span className="inline-block w-2 h-4 bg-[#00ff88] bs-caret ml-1" />
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick CTA Actions inside hero card */}
+                <div className="mt-6 pt-4 border-t-2 border-black/80 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                  <button
+                    onClick={handleDownloadVCard}
+                    onMouseEnter={playPop}
+                    className="px-4 py-2 border-2 border-black bg-[#f9f4da] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-[#fcba28] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
+                  >
+                    <Download size={15} /> SIMPAN KONTAK (VCARD)
+                  </button>
+
+                  <a
+                    href="#portfolio"
+                    onMouseEnter={playPop}
+                    className="px-4 py-2 border-2 border-black bg-[#00ff88] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-white active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center gap-1.5"
+                  >
+                    JELAJAHI PORTOFOLIO ➔
+                  </a>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          {/* Social Channels Ribbon (Brutalist Divided Bar) */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <p className="font-mono text-center text-xs font-bold uppercase tracking-widest text-[#a3a3a3] mb-4">
+              CONNECT VIA OFFICIAL SOCIAL NETWORKS
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 border-2 border-black divide-x-2 divide-y-2 sm:divide-y-0 divide-black bg-[#141414] shadow-[6px_6px_0_0_#000]">
+              {socials.map((s) => (
+                <a
+                  key={s.id}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playPop}
+                  className="p-3 sm:p-4 flex flex-col items-center justify-center text-center group hover:bg-[#1a1a1a] transition-colors no-underline"
+                >
+                  <div
+                    className="p-2 border-2 border-black text-black mb-1.5 shadow-[2px_2px_0_0_#000] group-hover:rotate-6 transition-transform"
+                    style={{ backgroundColor: s.color }}
+                  >
+                    {s.icon}
+                  </div>
+                  <span className="font-head text-xs font-bold uppercase text-white group-hover:text-[#fcba28]">
+                    {s.title}
+                  </span>
+                  <span className="font-mono text-[10px] text-[#a3a3a3] truncate max-w-full">
+                    {s.handle}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================================
+          KEY STATS TICKER (BrutStack Stats Section)
+      ========================================================================== */}
+      <section className="w-full bg-[#141414] border-b-2 border-black py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 border-2 border-black divide-x-2 divide-y-2 md:divide-y-0 divide-black bg-[#1a1a1a] shadow-[6px_6px_0_0_#000]">
+            {stats.map((st, idx) => (
+              <div key={idx} className="p-4 sm:p-6 text-center group hover:bg-[#141414] transition-colors">
+                <p className="font-head text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-tight text-white group-hover:text-[#00ff88] transition-colors">
+                  {st.val}
+                </p>
+                <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#fcba28] mt-1">
+                  {st.label}
+                </p>
+                <p className="font-sans text-xs text-[#a3a3a3] mt-0.5">
+                  {st.sub}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          MAIN SEARCH & FILTER CONTROLS
+      ========================================================================== */}
+      <section className="w-full pt-12 pb-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            
+            {/* Search Input Box */}
+            <div className="relative flex-1 max-w-xl">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-black">
+                <Search size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="Cari tautan, portofolio, tools, atau grup..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-3 bg-[#f9f4da] text-black font-mono text-xs sm:text-sm font-bold border-2 border-black shadow-[4px_4px_0_0_#000] focus:outline-none focus:bg-[#fcba28] transition-all placeholder:text-neutral-600"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-black hover:text-red-600"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Category Filter Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 font-mono text-xs font-bold uppercase scrollbar-none">
+              {[
+                { id: 'ALL', label: 'SEMUA LINK' },
+                { id: 'PORTFOLIO', label: 'PORTOFOLIO' },
+                { id: 'COMMUNITY', label: 'LOKER BRAY' },
+                { id: 'ANULCOPY', label: 'ANUL COPY' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => { playPop(); setActiveTab(tab.id); }}
+                  className={`px-3 py-2 border-2 border-black shrink-0 transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-[#00ff88] text-black shadow-[3px_3px_0_0_#000] -translate-y-0.5'
+                      : 'bg-[#141414] text-[#f9f4da] hover:bg-[#f9f4da] hover:text-black shadow-[2px_2px_0_0_#000]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          DYNAMIC LINK CATEGORIES SECTIONS (BrutStack Bento Grid)
+      ========================================================================== */}
+      <main className="w-full space-y-16 pb-20">
+        {filteredCategories.length > 0 ? (
+          filteredCategories.map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24"
+            >
+              {/* Section Header */}
+              <div className="flex flex-col items-start mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <span
+                    className="font-mono text-xs font-bold uppercase tracking-wider px-3 py-1 border-2 border-black text-black shadow-[2px_2px_0_0_#000]"
+                    style={{ backgroundColor: section.accentColor }}
+                  >
+                    {section.badge}
+                  </span>
+                  <div className="h-0.5 w-12 bg-black" />
+                </div>
+
+                <h2 className="font-head text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-tight text-white">
+                  {section.category}
+                </h2>
+                <p className="font-sans text-xs sm:text-sm text-[#a3a3a3] max-w-2xl mt-1">
+                  {section.description}
+                </p>
+
+                {/* Important Group Alert Notice */}
+                {section.alertNote && (
+                  <div className="mt-4 w-full p-4 border-2 border-black bg-[#fcba28] text-black font-mono text-xs sm:text-sm font-bold shadow-[4px_4px_0_0_#000] flex items-start gap-3">
+                    <AlertTriangle size={20} className="shrink-0 mt-0.5 text-black" />
+                    <p className="leading-relaxed">{section.alertNote}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Cards Grid using BrutStack 3-Layer Retro Stack */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+                {section.items.map((item) => (
+                  <BrutRetroCard key={item.id} item={item} />
+                ))}
+              </div>
+            </section>
+          ))
+        ) : (
+          <div className="max-w-md mx-auto text-center py-16 px-4 border-2 border-black bg-[#141414] shadow-[6px_6px_0_0_#000]">
+            <Search size={40} className="mx-auto mb-3 text-[#fcba28]" />
+            <h3 className="font-head text-lg font-bold uppercase text-white">
+              Tautan Tidak Ditemukan
+            </h3>
+            <p className="font-sans text-xs text-[#a3a3a3] mt-1 mb-4">
+              Tidak ada link yang sesuai dengan kata kunci "{searchQuery}".
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setActiveTab('ALL'); }}
+              className="px-4 py-2 border-2 border-black bg-[#00ff88] text-black font-mono text-xs font-bold uppercase shadow-[2px_2px_0_0_#000]"
+            >
+              RESET PENCARIAN
+            </button>
+          </div>
+        )}
+
+        {/* =========================================================================
+            DEVELOPER SPECS & TERMINAL SECTION (BrutStack Section 3 Style)
+        ========================================================================== */}
+        <section id="cli-specs" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 scroll-mt-24">
+          <div className="flex flex-col items-start mb-6">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider px-3 py-1 border-2 border-black bg-[#c084fc] text-black shadow-[2px_2px_0_0_#000] mb-2">
+              DEVELOPER EXPERIENCE
+            </span>
+            <h2 className="font-head text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-tight text-white">
+              INTEGRATION & DEVELOPER SPECS
+            </h2>
+            <p className="font-sans text-xs sm:text-sm text-[#a3a3a3] max-w-xl mt-1">
+              Informasi arsitektur sistem, stack teknologi aktif, dan perintah curl kontak untuk integrasi cepat.
+            </p>
+          </div>
+
+          <div className="border-2 border-black shadow-[8px_8px_0_0_#000] bg-[#0e0e0e] overflow-hidden">
+            {/* Terminal Top Navigation Bar */}
+            <div className="flex items-center justify-between border-b-2 border-black px-4 py-3 bg-[#141414]">
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#ff3333] border border-black inline-block" />
+                <span className="h-3 w-3 rounded-full bg-[#fcba28] border border-black inline-block" />
+                <span className="h-3 w-3 rounded-full bg-[#00ff88] border border-black inline-block" />
+                <span className="font-mono text-xs font-bold uppercase tracking-wider text-white ml-2">
+                  NULL_STACK_CLI.SH
+                </span>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex items-center gap-1 font-mono text-[11px] font-bold">
+                {[
+                  { id: 'SPECS', label: 'TECH SPECS' },
+                  { id: 'CURL', label: 'CURL API' },
+                  { id: 'VCARD', label: 'VCARD DATA' },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => { playPop(); setCliTab(t.id); }}
+                    className={`px-3 py-1 border-2 border-black transition-colors ${
+                      cliTab === t.id
+                        ? 'bg-[#f9f4da] text-black'
+                        : 'bg-transparent text-[#a3a3a3] hover:text-white'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Terminal Body Content */}
+            <div className="p-5 sm:p-6 font-mono text-xs sm:text-sm text-[#f9f4da] overflow-x-auto">
+              {cliTab === 'SPECS' && (
+                <div className="space-y-2">
+                  <p className="text-[#a3a3a3]"># Arsitektur & Lingkungan Pengembangan Nullsanz:</p>
+                  <p><span className="text-[#00ff88]">CORE_FRONTEND:</span> React 19 • Vite 7 • Tailwind CSS v4 • Framer Motion</p>
+                  <p><span className="text-[#fcba28]">BACKEND_STACK:</span> Node.js 22 LTS • Baileys Multi-Device WA • Firebase RTDB</p>
+                  <p><span className="text-[#14b6e5]">AI_CASCADE:</span> Gemini 3.5 Flash-Lite & 3.8 Flash • RAG lokerKnowledge</p>
+                  <p><span className="text-[#c084fc]">INFRASTRUCTURE:</span> Linux VPS (103.169.207.132) • PM2 Services • Vercel Edge</p>
+                  <p><span className="text-[#ff3344]">MEDIA_ENGINE:</span> FFmpeg 7.1 • HLG 10-Bit HDR • WASM Document Processing</p>
+                </div>
+              )}
+
+              {cliTab === 'CURL' && (
+                <div className="space-y-3">
+                  <p className="text-[#a3a3a3]"># Salin curl untuk ping profil dan endpoint vCard langsung:</p>
+                  <div className="p-3 bg-[#141414] border border-black flex items-center justify-between text-[#00ff88] text-xs">
+                    <code>curl -s https://bio.anull.cloud/ -H "User-Agent: NullStack/1.0"</code>
+                    <button
+                      onClick={() => {
+                        playPop();
+                        navigator.clipboard.writeText('curl -s https://bio.anull.cloud/ -H "User-Agent: NullStack/1.0"');
+                        toast.success('Curl command disalin!');
+                      }}
+                      className="p-1 hover:text-white"
+                      title="Salin curl"
+                    >
+                      <Copy size={14} />
+                    </button>
+                  </div>
+                  <p className="text-[#fcba28] text-xs">➔ Response: HTTP 200 OK • Status: Available for Projects</p>
+                </div>
+              )}
+
+              {cliTab === 'VCARD' && (
+                <div className="space-y-1 text-xs text-[#a3a3a3]">
+                  <p className="text-[#00ff88]">BEGIN:VCARD</p>
+                  <p>VERSION:3.0</p>
+                  <p>FN:Lukmanul Hakim</p>
+                  <p>TITLE:Founder LokerBray & IT Multimedia PT Ihara</p>
+                  <p>TEL;TYPE=CELL:+6285718532060</p>
+                  <p>URL:https://nullsanz.anull.cloud/</p>
+                  <p className="text-[#00ff88]">END:VCARD</p>
+                </div>
+              )}
+            </div>
+
+            {/* Terminal Footer */}
+            <div className="px-4 py-2 border-t-2 border-black bg-[#141414] flex items-center justify-between font-mono text-[11px] text-[#a3a3a3]">
+              <span>STATUS: PRODUCTION_READY</span>
+              <span className="text-[#00ff88] flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-[#00ff88] inline-block" /> ALL SYSTEMS OPERATIONAL
+              </span>
+            </div>
+          </div>
+        </section>
+
       </main>
+
+      {/* =========================================================================
+          FOOTER (BrutStack 3-Column Grid Footer)
+      ========================================================================== */}
+      <footer className="w-full border-t-2 border-black bg-[#141414] text-[#f9f4da]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y-2 md:divide-y-0 md:divide-x-2 divide-black">
+          
+          {/* Col 1: Brand & Philosophy */}
+          <div className="p-8 sm:p-10 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 border-2 border-black bg-[#00ff88] text-black font-head font-extrabold text-base flex items-center justify-center shadow-[2px_2px_0_0_#000]">
+                  LH
+                </div>
+                <div>
+                  <h3 className="font-head text-xl font-bold uppercase text-white">
+                    LUKMANUL HAKIM
+                  </h3>
+                  <p className="font-mono text-xs text-[#00ff88] tracking-wider">
+                    @NULL.CLOUD • LOKERBRAY
+                  </p>
+                </div>
+              </div>
+              
+              <div className="h-1.5 w-16 bg-[#fcba28] mb-4" />
+              
+              <p className="font-sans text-xs sm:text-sm text-[#a3a3a3] leading-relaxed">
+                Membangun platform digital, solusi otomatisasi WhatsApp, dan sistem bantuan pencari kerja yang transparan, mudah diakses, dan bermanfaat bagi masyarakat.
+              </p>
+            </div>
+
+            <div className="mt-8 font-mono text-[11px] text-[#737373]">
+              © {new Date().getFullYear()} NULL.CLOUD • ALL RIGHTS RESERVED.
+            </div>
+          </div>
+
+          {/* Col 2: Navigation Index */}
+          <div className="p-8 sm:p-10">
+            <span className="inline-block px-3 py-1 border-2 border-black bg-[#f9f4da] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_0_#000] mb-6">
+              SITEMAP & TAUTAN
+            </span>
+
+            <div className="grid grid-cols-2 gap-3 font-mono text-xs uppercase font-bold">
+              <a href="#portfolio" className="hover:text-[#00ff88] transition-colors py-1">➔ Portofolio</a>
+              <a href="#community" className="hover:text-[#fcba28] transition-colors py-1">➔ Komunitas</a>
+              <a href="#anulcopy" className="hover:text-[#14b6e5] transition-colors py-1">➔ Anul Copy</a>
+              <a href="#cli-specs" className="hover:text-[#c084fc] transition-colors py-1">➔ CLI Specs</a>
+              <a href="https://wa.me/6285718532060" target="_blank" rel="noreferrer" className="hover:text-[#00ff88] transition-colors py-1">➔ WhatsApp</a>
+              <a href="https://github.com/nullsanz" target="_blank" rel="noreferrer" className="hover:text-white transition-colors py-1">➔ GitHub</a>
+            </div>
+
+            <div className="mt-8 p-3 border-2 border-black bg-[#1a1a1a] shadow-[3px_3px_0_0_#000]">
+              <p className="font-mono text-[11px] text-[#fcba28] font-bold uppercase mb-1">
+                📍 LOKASI KANTOR / BASE:
+              </p>
+              <p className="font-sans text-xs text-[#a3a3a3]">
+                Karawang, Jawa Barat — Indonesia
+              </p>
+            </div>
+          </div>
+
+          {/* Col 3: Direct Actions & Back to Top */}
+          <div className="p-8 sm:p-10 flex flex-col justify-between">
+            <div>
+              <span className="inline-block px-3 py-1 border-2 border-black bg-[#14b6e5] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_0_#000] mb-6">
+                QUICK ACCESS
+              </span>
+
+              <p className="font-sans text-xs text-[#a3a3a3] mb-4">
+                Ada tawaran kolaborasi proyek, pertanyaan loker, atau kerjasama percetakan? Hubungi langsung:
+              </p>
+
+              <div className="space-y-3">
+                <a
+                  href={`https://wa.me/${profileData.cleanPhone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playPop}
+                  className="w-full py-2.5 px-4 border-2 border-black bg-[#00ff88] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-white active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 no-underline"
+                >
+                  <MessageCircle size={16} /> CHAT LANGSUNG WHATSAPP
+                </a>
+
+                <button
+                  onClick={handleDownloadVCard}
+                  onMouseEnter={playPop}
+                  className="w-full py-2.5 px-4 border-2 border-black bg-[#f9f4da] text-black font-head font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_0_#000] hover:bg-[#fcba28] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={16} /> SIMPAN VCARD KE HP
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t-2 border-black/80 flex items-center justify-between">
+              <span className="font-mono text-[11px] text-[#a3a3a3]">
+                bio.anull.cloud
+              </span>
+              <button
+                onClick={() => { playPop(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="font-mono text-xs font-bold uppercase text-[#00ff88] hover:underline flex items-center gap-1"
+              >
+                KEMBALI KE ATAS ↑
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </footer>
     </div>
   );
 }
