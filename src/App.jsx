@@ -1048,7 +1048,7 @@ END:VCARD`;
                   <p><span className="text-[#00ff88]">CORE_FRONTEND:</span> React 19 • Vite 7 • Tailwind CSS v4 • Framer Motion</p>
                   <p><span className="text-[#fcba28]">BACKEND_STACK:</span> Node.js 22 LTS • Baileys Multi-Device WA • Firebase RTDB</p>
                   <p><span className="text-[#14b6e5]">AI_CASCADE:</span> Gemini 3.5 Flash-Lite & 3.8 Flash • RAG lokerKnowledge</p>
-                  <p><span className="text-[#c084fc]">INFRASTRUCTURE:</span> Linux VPS (103.169.207.132) • PM2 Services • Vercel Edge</p>
+                  <p><span className="text-[#c084fc]">INFRASTRUCTURE:</span> Linux Cloud VPS • PM2 Multi-Process • Vercel Edge Network</p>
                   <p><span className="text-[#ff3344]">MEDIA_ENGINE:</span> FFmpeg 7.1 • HLG 10-Bit HDR • WASM Document Processing</p>
                 </div>
               )}
